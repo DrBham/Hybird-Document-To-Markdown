@@ -1,0 +1,7 @@
+# Direct project dependencies
+# Document to Markdown Desktop Converter
+
+PySide6
+python-docx
+pdfplumber
+pytest
