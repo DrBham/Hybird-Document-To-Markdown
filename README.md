@@ -23,7 +23,7 @@
 **Custom-built conversion logic:** The application will implement its own format-specific conversion rules, Markdown builder, routing, validation, and desktop workflow. Established libraries may be used to parse source documents and construct the GUI; the production conversion pipeline will **not** rely on a ready-made document-to-Markdown converter such as MarkItDown.
 
 > [!IMPORTANT]
-> **Current status:** Phase 1 environment setup and dependency cleanup have passed local verification; the Phase 1 Git commit and push are pending. The converters and GUI are **planned, not implemented**. Fidelity of headings, lists, tables, and reading order is a testable goal, **not a 100% guarantee**, particularly for PDFs. OCR for scanned PDFs is out of scope for the first release.
+> **Current status:** Phase 1 environment setup and dependency cleanup are complete. Phase 2 — modular architecture and converter interfaces — is in progress. The converters and GUI are **planned, not implemented**. Fidelity of headings, lists, tables, and reading order is a testable goal, **not a 100% guarantee**, particularly for PDFs. OCR for scanned PDFs is out of scope for the first release.
 
 ## Planned Features
 
@@ -143,8 +143,8 @@ Every milestone follows **implement → test → document → commit → push**.
 | Phase | Milestone | Status |
 |:---:|---|:---:|
 | 00 | Repository and initial introduction | 🟢 Completed |
-| 01 | Environment setup, dependency cleanup, and Git workflow | 🟡 Verified locally — pending push |
-| 02 | Modular architecture and converter interfaces | ⚪ Planned |
+| 01 | Environment setup, dependency cleanup, and Git workflow | 🟢 Completed |
+| 02 | Modular architecture and converter interfaces | 🟡 In progress |
 | 03 | Custom TXT conversion engine | ⚪ Planned |
 | 04 | Custom DOCX conversion engine | ⚪ Planned |
 | 05 | Custom PDF conversion engine and layout heuristics | ⚪ Planned |
