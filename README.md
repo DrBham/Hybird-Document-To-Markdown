@@ -23,7 +23,7 @@
 **Custom-built conversion logic:** The application will implement its own format-specific conversion rules, Markdown builder, routing, validation, and desktop workflow. Established libraries may be used to parse source documents and construct the GUI; the production conversion pipeline will **not** rely on a ready-made document-to-Markdown converter such as MarkItDown.
 
 > [!IMPORTANT]
-> **Current status:** Environment setup and dependency cleanup are in progress. The converters and GUI are **planned, not implemented**. Fidelity of headings, lists, tables, and reading order is a testable goal, **not a 100% guarantee**, particularly for PDFs. OCR for scanned PDFs is out of scope for the first release.
+> **Current status:** Phase 1 environment setup and dependency cleanup have passed local verification; the Phase 1 Git commit and push are pending. The converters and GUI are **planned, not implemented**. Fidelity of headings, lists, tables, and reading order is a testable goal, **not a 100% guarantee**, particularly for PDFs. OCR for scanned PDFs is out of scope for the first release.
 
 ## Planned Features
 
@@ -143,7 +143,7 @@ Every milestone follows **implement → test → document → commit → push**.
 | Phase | Milestone | Status |
 |:---:|---|:---:|
 | 00 | Repository and initial introduction | 🟢 Completed |
-| 01 | Environment setup, dependency cleanup, and Git workflow | 🟡 In progress |
+| 01 | Environment setup, dependency cleanup, and Git workflow | 🟡 Verified locally — pending push |
 | 02 | Modular architecture and converter interfaces | ⚪ Planned |
 | 03 | Custom TXT conversion engine | ⚪ Planned |
 | 04 | Custom DOCX conversion engine | ⚪ Planned |
@@ -167,7 +167,22 @@ python -m pip install -r requirements.txt
 python -m pip check
 ```
 
-> **Development-only setup:** The application is not yet runnable. `requirements.txt` is generated after cleaning the environment to match the three-format scope.
+### Dependency Management
+
+| File | Purpose |
+|---|---|
+| `requirements.in` | Human-readable list of direct project dependencies: PySide6, python-docx, pdfplumber, and pytest. |
+| `requirements.txt` | Pinned environment snapshot generated with `python -m pip freeze > requirements.txt`. |
+
+**Phase 1 environment validation (Windows / Python 3.13):**
+
+- Virtual environment activated successfully; Python and pip resolve inside `.venv`.
+- The four direct dependencies import successfully.
+- `python -m pip check` reports no broken requirements.
+- MarkItDown, python-pptx, and markdownify are absent from the clean environment.
+- `.venv/` is ignored by Git.
+
+> **Development-only setup:** The converters and desktop GUI have not been implemented yet. Phase 1 verification covers environment setup, **not conversion accuracy or runtime behavior**.
 
 ## Engineering Principles
 
@@ -192,9 +207,9 @@ Test extraction completeness, structural fidelity, edge cases, and error handlin
 
 ## License & Credits
 
-This independent portfolio project is **not affiliated with Microsoft**. [Microsoft MarkItDown](https://github.com/microsoft/markitdown) was evaluated during initial prototyping but is **not a dependency of the planned production application**. The repository retains its original `Hybrid-Document-To-Markdown` URL for continuity.
+This is an independent portfolio project. [Microsoft MarkItDown](https://github.com/microsoft/markitdown) was considered early in planning but is **not used as a project dependency**. The repository retains its original `Hybrid-Document-To-Markdown` URL for continuity.
 
-The project's own license, if selected, is defined in the root `LICENSE` file. Any third-party libraries used or redistributed must comply with their respective licenses. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md), which will be revised to match the final dependency set.
+If a project license is added, its terms will be in the root `LICENSE` file. Third-party dependencies remain governed by their respective licenses, including distribution obligations for PySide6/Qt. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md); its notices must be updated and verified before packaging or release.
 
 ---
 
