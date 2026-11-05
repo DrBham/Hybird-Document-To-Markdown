@@ -10,7 +10,7 @@
 [![Platform](https://img.shields.io/badge/PLATFORM-WINDOWS-0078D4?style=for-the-badge&logo=windows&logoColor=white)](#technology-stack)
 [![Engines](https://img.shields.io/badge/CONVERTERS-3%20CUSTOM-16A34A?style=for-the-badge)](#supported-formats)
 
-**[Overview](#overview) · [Features](#planned-features) · [Architecture](#custom-conversion-architecture) · [Roadmap](#development-roadmap) · [Phase 3 Guide](docs/PHASE_03.md) · [Credits](#license--credits)**
+**[Overview](#overview) · [Features](#planned-features) · [Architecture](#custom-conversion-architecture) · [Roadmap](#development-roadmap) · [Credits](#license--credits)**
 
 </div>
 
@@ -23,7 +23,7 @@
 **Custom-built conversion logic:** The application will implement its own format-specific conversion rules, Markdown builder, routing, validation, and desktop workflow. Established libraries may be used to parse source documents and construct the GUI; the production conversion pipeline will **not** rely on a ready-made document-to-Markdown converter such as MarkItDown.
 
 > [!IMPORTANT]
-> **Current status:** Phase 1 and Phase 2 learning milestones have passed local verification (14 automated tests and the architecture assessment). **Phase 3 — Custom TXT Conversion Engine — is in progress.** The TXT engine is not yet implemented; DOCX/PDF engines and the GUI remain planned. Fidelity of headings, lists, tables, and reading order is a testable goal, **not a 100% guarantee**, particularly for PDFs. OCR for scanned PDFs is out of scope for the first release.
+> **Current status:** Phase 1 and Phase 2 are completed. **Phase 3 — Custom TXT Conversion Engine — is in progress.** Basic TXT reading, preliminary heading handling, block splitting, and block classification have been implemented locally; they are not yet consolidated into the production conversion pipeline. The most recent reported local run passed **19 automated tests** (covering the shared architecture and preliminary block-analysis components, not end-to-end TXT conversion). DOCX/PDF engines and the GUI remain planned. Fidelity of headings, lists, tables, and reading order is a testable goal, **not a 100% guarantee**, particularly for PDFs. OCR for scanned PDFs is out of scope for the first release.
 
 ## Planned Features
 
@@ -104,7 +104,7 @@ flowchart TD
     class V,O output;
 ```
 
-*Architecture scaffold verified in Phase 2; format-specific converter engines are still pending implementation.*
+*Shared architecture was tested in Phase 2. TXT conversion is a work in progress; DOCX and PDF implementation has not started.*
 
 ## Technology Stack
 
@@ -145,14 +145,14 @@ Every milestone follows **implement → test → document → commit → push**.
 | 00 | Repository and initial introduction | 🟢 Completed |
 | 01 | Environment setup, dependency cleanup, and Git workflow | 🟢 Completed |
 | 02 | Modular architecture, router, validator, Markdown builder/exporter | 🟢 Completed |
-| 03 | Custom TXT conversion engine | 🟡 In progress |
-| 04 | Custom DOCX conversion engine | ⚪ Planned |
-| 05 | Custom PDF conversion engine and layout heuristics | ⚪ Planned |
-| 06 | Desktop GUI and drag-and-drop | ⚪ Planned |
+| 03 | Custom TXT engine, fidelity testing, and basic GUI prototype | 🟡 In progress |
+| 04 | Custom DOCX engine and basic GUI prototype integration | ⚪ Planned |
+| 05 | Custom PDF engine, layout heuristics, and basic GUI prototype integration | ⚪ Planned |
+| 06 | Polished desktop UI/UX and drag-and-drop | ⚪ Planned |
 | 07 | Automated tests and conversion quality evaluation | ⚪ Planned |
 | 08 | Windows packaging, documentation, and release | ⚪ Planned |
 
-**Current milestone:** [Phase 3 — Custom TXT Conversion Engine](docs/PHASE_03.md). Phase 2 verification: 14/14 automated tests passed locally, and the architecture assessment was completed. See [Phase 2 notes](docs/PHASE_02.md).
+**Current milestone:** Phase 3 — Custom TXT Conversion Engine, including module consolidation and content-fidelity testing. Latest reported local regression result: **19/19 tests passed**. The Phase 2 architecture assessment was completed. Phase 3 is **not** complete.
 
 **Legend:** 🟢 Completed · 🟡 In progress · ⚪ Planned
 
@@ -161,8 +161,8 @@ Every milestone follows **implement → test → document → commit → push**.
 **Prerequisites:** Windows, Git, Python 3.13.
 
 ```powershell
-git clone https://github.com/DrBham/Hybrid-Document-To-Markdown.git
-cd Hybrid-Document-To-Markdown
+git clone https://github.com/DrBham/Hybird-Document-To-Markdown.git
+cd Hybird-Document-To-Markdown
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
@@ -184,7 +184,15 @@ python -m pip check
 - MarkItDown, python-pptx, and markdownify are absent from the clean environment.
 - `.venv/` is ignored by Git.
 
-> **Development-only setup:** Shared architecture components have been tested, but no real TXT/DOCX/PDF conversion engine or desktop GUI is available yet. The 14 Phase 2 tests do **not** establish document conversion accuracy.
+> **Development-only setup:** Preliminary TXT parsing code exists, but the full TXT-to-Markdown workflow is not yet integrated or validated. DOCX/PDF engines and the GUI are not available yet. The 19 local tests reported so far do **not** establish conversion accuracy across real-world files.
+
+## Content Fidelity First
+
+- Preserve original wording, meaning, order, and meaningful whitespace.
+- Infer headings and lists only from sufficiently strong evidence; preserve ambiguous text.
+- Do not add automatic keyword bolding to ordinary prose.
+- Keep the desktop workflow simple: **Select → Convert → Save Markdown**.
+- Build conversion algorithms in-house; use third-party libraries for parsing/UI/testing, not ready-made conversions.
 
 ## Engineering Principles
 
@@ -209,9 +217,9 @@ Test extraction completeness, structural fidelity, edge cases, and error handlin
 
 ## License & Credits
 
-This is an independent portfolio project. [Microsoft MarkItDown](https://github.com/microsoft/markitdown) was considered early in planning but is **not used as a project dependency**. The repository retains its original `Hybrid-Document-To-Markdown` URL for continuity.
+This is an independent portfolio project. [Microsoft MarkItDown](https://github.com/microsoft/markitdown) was considered early in planning but is **not used as a project dependency**. The repository is hosted at [DrBham/Hybird-Document-To-Markdown](https://github.com/DrBham/Hybird-Document-To-Markdown).
 
-The application license, if selected, is provided in the root `LICENSE` file. Third-party dependencies remain governed by their respective licenses, including distribution obligations for PySide6/Qt. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for current dependencies and the licensing review checklist.
+Original project code is offered under the [MIT License](LICENSE). Third-party dependencies remain governed by their respective licenses, including distribution obligations for PySide6/Qt. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for current dependencies and the licensing review checklist.
 
 ---
 
