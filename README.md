@@ -1,16 +1,16 @@
 <div align="center">
 
 # 📄 Document to Markdown
-### Custom Desktop Converter
+### Hybrid Desktop Converter
 
-**Three essential formats. Three custom conversion engines. One local-first Python desktop app.**
+**Multi-format document conversion. Local-first processing. Optional OCR and Vision enhancements.**
 
 [![Status](https://img.shields.io/badge/STATUS-IN%20DEVELOPMENT-7C3AED?style=for-the-badge)](#development-roadmap)
 [![Python](https://img.shields.io/badge/PYTHON-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](#technology-stack)
-[![Platform](https://img.shields.io/badge/PLATFORM-WINDOWS-0078D4?style=for-the-badge&logo=windows&logoColor=white)](#technology-stack)
-[![Engines](https://img.shields.io/badge/CONVERTERS-3%20CUSTOM-16A34A?style=for-the-badge)](#supported-formats)
+[![Platform](https://img.shields.io/badge/PLATFORM-WINDOWS-0078D4?style=for-the-badge)](#technology-stack)
+[![Engine](https://img.shields.io/badge/ENGINE-MARKITDOWN-16A34A?style=for-the-badge)](#conversion-architecture)
 
-**[Overview](#overview) · [Features](#planned-features) · [Architecture](#custom-conversion-architecture) · [Roadmap](#development-roadmap) · [Credits](#license--credits)**
+**[Overview](#overview) · [Features](#planned-application-features) · [Formats](#target-formats) · [Architecture](#conversion-architecture) · [Roadmap](#development-roadmap) · [Credits](#license--credits)**
 
 </div>
 
@@ -18,93 +18,104 @@
 
 ## Overview
 
-**Document to Markdown Desktop Converter** is an independent, in-development Python desktop application designed to convert **TXT, DOCX, and PDF** files into structured, AI-friendly Markdown (`.md`). It focuses on common documents and a simple offline-first workflow.
+**Document to Markdown Desktop Converter** is an independent Python portfolio project for a Windows desktop application that converts common document formats into readable Markdown (`.md`). The intended experience is straightforward: select or drop documents, convert them, preview the Markdown, and export the results.
 
-**Custom-built conversion logic:** The application will implement its own format-specific conversion rules, Markdown builder, routing, validation, and desktop workflow. Established libraries may be used to parse source documents and construct the GUI; the production conversion pipeline will **not** rely on a ready-made document-to-Markdown converter such as MarkItDown.
+The planned production conversion engine is [Microsoft MarkItDown](https://github.com/microsoft/markitdown). Rather than reimplementing format-specific conversion algorithms, the project focuses on the desktop workflow and the software around that engine: file validation, same-extension batch processing, per-file outcomes, Markdown preview and export, error handling, testing, and Windows packaging.
 
 > [!IMPORTANT]
-> **Current status:** Phase 1 and Phase 2 are completed. **Phase 3 — Custom TXT Conversion Engine — is in progress.** Basic TXT reading, preliminary heading handling, block splitting, and block classification have been implemented locally; they are not yet consolidated into the production conversion pipeline. The most recent reported local run passed **19 automated tests** (covering the shared architecture and preliminary block-analysis components, not end-to-end TXT conversion). DOCX/PDF engines and the GUI remain planned. Fidelity of headings, lists, tables, and reading order is a testable goal, **not a 100% guarantee**, particularly for PDFs. OCR for scanned PDFs is out of scope for the first release.
+> **Development status:** The repository and development environment have been initialized, and an initial modular architecture has been built. Earlier work on a custom TXT converter is retained as an experimental learning milestone, but that approach has been superseded. Documentation is being migrated to the MarkItDown-based plan. **MarkItDown integration, multi-format verification, the complete GUI, OCR/Vision enhancements, and a packaged Windows release are not yet confirmed complete.**
 
-## Planned Features
+This is an independent application that plans to integrate MarkItDown; it is **not an official Microsoft product**.
+
+## Planned Application Features
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-### 🖱️ Drag & Drop
-Choose or drop documents using a desktop interface built with PySide6.
+### 🖱️ Desktop File Selection
+Select files using a Windows file picker or drag and drop them into the planned PySide6 interface.
 
 </td>
 <td width="50%" valign="top">
 
-### 🧩 Three Custom Engines
-Write original TXT, DOCX, and PDF-to-Markdown conversion logic.
+### 📚 Multi-Format Conversion
+Integrate MarkItDown as the primary engine and verify each target document format with representative test files.
 
 </td>
 </tr>
 <tr>
 <td valign="top">
 
-### 🏗️ Structure-Aware Output
-Reconstruct headings, lists, tables, and reading order where the source allows.
+### 🗂️ Same-Extension Batches
+Process multiple files in one batch **only when they share the same file extension** (case-insensitive). Each input produces its own Markdown file and success/failure status.
 
 </td>
 <td valign="top">
 
-### 🤖 AI-Friendly Markdown
-Export readable `.md` files for AI-assisted workflows and knowledge bases.
+### 👁️ Preview & Export
+Review generated Markdown before export and choose an output location, with clear handling of filenames, overwrites, and file errors.
 
 </td>
 </tr>
 <tr>
 <td valign="top">
 
-### 🧪 Testable Algorithms
-Validate results with representative files, regression tests, and edge cases.
+### 🔒 Local-First Operation
+Use local conversion by default, without requiring a cloud API key or document upload for supported local workflows.
 
 </td>
 <td valign="top">
 
-### 🔒 Local-First
-Process documents on the user's machine without required cloud uploads.
+### 🧠 Optional OCR & Vision
+Plan image-text extraction and visual descriptions with explicit user consent and a configured online Vision API. Local conversion remains available if online processing is unavailable.
 
 </td>
 </tr>
 </table>
 
-## Supported Formats
+> These are **target features**, not a statement that all features are implemented. Conversion quality and supported enhancements will be established through integration tests.
 
-| Format | Custom implementation plan | Status |
-|:---:|---|:---:|
-| 📃 **TXT** | Text structure detection, lists, and Markdown escaping | 🟡 In progress |
-| 📘 **DOCX** | Heading, paragraph, numbering, and table mapping using parsed Word content | ⚪ Planned |
-| 📕 **PDF** | Text/layout extraction and original structure-reconstruction heuristics | ⚪ Planned |
+## Target Formats
 
-**Not in scope:** HTML and PPTX conversion. PDF OCR, password-protected PDFs, and perfect reconstruction of complex layouts are not part of the initial feature commitment.
+The MVP targets the following inputs. Actual support and output quality **must be verified after MarkItDown integration**.
 
-## Custom Conversion Architecture
+| Category | File extensions | Verification status |
+|---|---|---|
+| Plain text | `.txt` | Pending integration testing |
+| Word | `.docx` | Pending integration testing |
+| PDF | `.pdf` | Pending integration testing |
+| PowerPoint | `.pptx` | Pending integration testing |
+| Excel | `.xlsx` | Pending integration testing |
+| Tabular data | `.csv` | Pending integration testing |
+| Web documents | `.html`, `.htm` | Pending integration testing |
+| Structured data | `.json`, `.xml` | Pending integration testing |
+
+Additional formats—including emails, archives, audio, EPUB, LOG, and standalone images—are outside the committed MVP scope. Encrypted files, scanned documents, intricate layouts, and visual content may require special handling or yield incomplete output.
+
+## Conversion Architecture
 
 ```mermaid
 flowchart TD
-    A["📂 Drag & Drop / File Picker"] --> B["File Validation"]
-    B --> C{"Custom Format Router"}
-    C -->|TXT| T["Custom TXT Engine"]
-    C -->|DOCX| D["Custom DOCX Engine"]
-    C -->|PDF| P["Custom PDF Engine"]
-    T --> M["Common Markdown Builder"]
-    D --> M
-    P --> M
-    M --> V["Validation and Error Reporting"]
-    V --> O["💾 Export .md"]
-    classDef input fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
-    classDef custom fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
-    classDef output fill:#dcfce7,stroke:#16a34a,color:#14532d;
-    class A,B input;
-    class C,T,D,P,M custom;
-    class V,O output;
+    A["File Picker / Drag & Drop (planned)"] --> B["File & Batch Validation"]
+    B --> C["Conversion Service / MarkItDown (planned)"]
+    C --> D["Markdown Result & Per-File Status"]
+    D --> E["Markdown Preview (planned)"]
+    E --> F["Export .md (planned)"]
+    G["Optional OCR / Vision API (planned)"] -. "With user consent" .-> C
+    G -. "Unavailable: continue local conversion" .-> D
 ```
 
-*Shared architecture was tested in Phase 2. TXT conversion is a work in progress; DOCX and PDF implementation has not started.*
+The flow above represents the **target architecture**, not a completed or verified runtime. Existing modules will be audited and reused where appropriate. No major refactor or deletion of the experimental TXT implementation is required solely for this documentation checkpoint.
+
+### Local-first with optional online enhancement
+
+- **Local conversion:** MarkItDown is intended to process supported files on the user's device, with no required cloud API key. Text embedded in images and scanned PDFs may not be extracted reliably.
+- **Optional online enhancement:** A compatible cloud Vision model API may add image interpretation and OCR via the planned `markitdown-ocr` integration. This requires user consent, valid credentials, and network access, and may incur API costs.
+- **Fallback:** If the online enhancement is unavailable, the application should attempt local conversion and clearly report which enhancements were skipped or failed. Online failure should not erase a successful local result.
+- **Privacy:** No content should be sent to a cloud provider before consent. API keys must never be committed, logged, or exported with Markdown results.
+
+The selected Vision model/provider has **not yet been finalized**. Azure Document Intelligence is not part of this project's scope.
 
 ## Technology Stack
 
@@ -112,53 +123,51 @@ flowchart TD
 <tr>
 <td width="50%" valign="top">
 
-**🐍 Conversion & Parsing**
+**🐍 Conversion & Enhancement**
 
-- Python 3.13
-- Python standard library — TXT logic
-- [python-docx](https://python-docx.readthedocs.io/) — DOCX access/parsing
-- [pdfplumber](https://github.com/jsvine/pdfplumber) — PDF text/layout access
-- Original Markdown generation rules
+- Python 3.13 — current development environment
+- [Microsoft MarkItDown](https://github.com/microsoft/markitdown) — planned primary conversion engine
+- [markitdown-ocr](https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr) — planned OCR/Vision plugin
+- Compatible Vision model API — provider not yet selected
 
 </td>
 <td width="50%" valign="top">
 
 **🖥️ Desktop & Quality**
 
-- [PySide6](https://doc.qt.io/qtforpython-6/) — desktop UI and drag-and-drop
-- [pytest](https://docs.pytest.org/) — automated tests
-- Git & GitHub — phase-by-phase version control
-- Windows — first packaging target
+- [PySide6](https://doc.qt.io/qtforpython-6/) — planned desktop interface
+- [pytest](https://docs.pytest.org/) — automated testing
+- Git & GitHub — development history
+- Windows — target release platform
 
 </td>
 </tr>
 </table>
 
-> The listed libraries are **parsing/UI/testing tools**, not third-party document-to-Markdown conversion engines. Dependency selection and licensing will be reviewed before the first release.
+Dependency compatibility, exact package versions, and any additional components will be checked during their implementation checkpoints. The previous environment included `python-docx` and `pdfplumber` as direct dependencies for the superseded custom-converter approach; their future direct use has **not** been decided.
 
 ## Development Roadmap
 
-Every milestone follows **implement → test → document → commit → push**.
+The milestone workflow is **implement → test → document → commit → push**. Commits are created at stable checkpoints, not for every small edit.
 
-| Phase | Milestone | Status |
+| Stage | Milestone | Status |
 |:---:|---|:---:|
-| 00 | Repository and initial introduction | 🟢 Completed |
-| 01 | Environment setup, dependency cleanup, and Git workflow | 🟢 Completed |
-| 02 | Modular architecture, router, validator, Markdown builder/exporter | 🟢 Completed |
-| 03 | Custom TXT engine, fidelity testing, and basic GUI prototype | 🟡 In progress |
-| 04 | Custom DOCX engine and basic GUI prototype integration | ⚪ Planned |
-| 05 | Custom PDF engine, layout heuristics, and basic GUI prototype integration | ⚪ Planned |
-| 06 | Polished desktop UI/UX and drag-and-drop | ⚪ Planned |
-| 07 | Automated tests and conversion quality evaluation | ⚪ Planned |
-| 08 | Windows packaging, documentation, and release | ⚪ Planned |
+| 00 | Repository initialization | 🟢 Completed |
+| 01 | Development environment | 🟢 Completed |
+| 02 | Initial modular architecture | 🟢 Completed |
+| 03 | Experimental custom TXT converter | ⚪ Superseded |
+| A | Documentation and scope migration | 🟡 In progress |
+| B | MarkItDown integration and basic TXT/DOCX/PDF verification | ⚪ Planned |
+| C | Multi-format verification, same-extension batches, validation, and export | ⚪ Planned |
+| D | PySide6 desktop GUI, file picker, drag-and-drop, status, and preview | ⚪ Planned |
+| E | Optional OCR/Vision, credentials, consent, and offline fallback | ⚪ Planned |
+| F | Regression/integration tests, Windows packaging, license audit, and release | ⚪ Planned |
 
-**Current milestone:** Phase 3 — Custom TXT Conversion Engine, including module consolidation and content-fidelity testing. Latest reported local regression result: **19/19 tests passed**. The Phase 2 architecture assessment was completed. Phase 3 is **not** complete.
-
-**Legend:** 🟢 Completed · 🟡 In progress · ⚪ Planned
+**Current checkpoint:** A — Documentation and Scope Migration. The earlier TXT experiment remains part of the project's Git history; it is no longer the intended production conversion engine.
 
 ## Development Setup
 
-**Prerequisites:** Windows, Git, Python 3.13.
+**Prerequisites:** Windows, Git, and Python 3.13.
 
 ```powershell
 git clone https://github.com/DrBham/Hybird-Document-To-Markdown.git
@@ -169,64 +178,42 @@ python -m pip install -r requirements.txt
 python -m pip check
 ```
 
+> [!NOTE]
+> The commands reproduce the **currently committed development dependency snapshot**, not the future MarkItDown-based application. Do not interpret them as a working end-user conversion installation. Dependency changes and installation are scheduled for **Checkpoint B**.
+
 ### Dependency Management
 
 | File | Purpose |
 |---|---|
-| `requirements.in` | Human-readable list of direct project dependencies: PySide6, python-docx, pdfplumber, and pytest. |
-| `requirements.txt` | Pinned environment snapshot generated with `python -m pip freeze > requirements.txt`. |
+| `requirements.in` | Direct development dependencies; to be reviewed during Checkpoint B |
+| `requirements.txt` | Existing pinned environment snapshot; to be updated after the integration dependencies are verified |
 
-**Phase 1 environment validation (Windows / Python 3.13):**
+Use a local `.venv` and keep secrets, credentials, generated files, and machine-specific settings out of version control.
 
-- Virtual environment activated successfully; Python and pip resolve inside `.venv`.
-- The four direct dependencies import successfully.
-- `python -m pip check` reports no broken requirements.
-- MarkItDown, python-pptx, and markdownify are absent from the clean environment.
-- `.venv/` is ignored by Git.
+## Conversion Quality & Engineering Principles
 
-> **Development-only setup:** Preliminary TXT parsing code exists, but the full TXT-to-Markdown workflow is not yet integrated or validated. DOCX/PDF engines and the GUI are not available yet. The 19 local tests reported so far do **not** establish conversion accuracy across real-world files.
-
-## Content Fidelity First
-
-- Preserve original wording, meaning, order, and meaningful whitespace.
-- Infer headings and lists only from sufficiently strong evidence; preserve ambiguous text.
-- Do not add automatic keyword bolding to ordinary prose.
-- Keep the desktop workflow simple: **Select → Convert → Save Markdown**.
-- Build conversion algorithms in-house; use third-party libraries for parsing/UI/testing, not ready-made conversions.
-
-## Engineering Principles
-
-<table>
-<tr>
-<td width="50%" valign="top">
-
-**🛠️ Learn by Building**
-
-Write and explain the conversion rules rather than wrapping a ready-made Markdown converter.
-
-</td>
-<td width="50%" valign="top">
-
-**📏 Measure, Don't Assume**
-
-Test extraction completeness, structural fidelity, edge cases, and error handling; document limitations.
-
-</td>
-</tr>
-</table>
+- Preserve document content and reading order as far as the conversion engine supports.
+- Test headings, lists, tables, and structured content using representative inputs.
+- Do not promise perfect fidelity for scanned PDFs, nested tables, diagrams, or complex layouts.
+- Validate input existence, access, extension, file size, same-extension batch rules, and export errors.
+- Handle failures per file so one conversion error does not discard successful batch outputs.
+- Test the **application's integration and behavior**, not MarkItDown's internal algorithms as though they were original project code.
+- Prefer a finished, maintainable Windows application over unnecessary converter reimplementation or speculative features.
 
 ## License & Credits
 
-This is an independent portfolio project. [Microsoft MarkItDown](https://github.com/microsoft/markitdown) was considered early in planning but is **not used as a project dependency**. The repository is hosted at [DrBham/Hybird-Document-To-Markdown](https://github.com/DrBham/Hybird-Document-To-Markdown).
+Original project code and documentation are made available under the repository's [MIT License](LICENSE), insofar as the contributors own the rights to license them. Third-party components remain under their respective licenses.
 
-Original project code is offered under the [MIT License](LICENSE). Third-party dependencies remain governed by their respective licenses, including distribution obligations for PySide6/Qt. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for current dependencies and the licensing review checklist.
+The project plans to use [Microsoft MarkItDown](https://github.com/microsoft/markitdown) as its primary document conversion engine. The planned GUI and optional enhancements are separate application-level contributions. This project is not affiliated with or endorsed by Microsoft or the third-party maintainers.
+
+See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for the current/planned dependency inventory and the release-license review checklist.
 
 ---
 
 <div align="center">
 
-**One phase. One tested milestone. One documented commit.**
+**Build deliberately. Test each milestone. Document the result.**
 
-*Custom conversion logic, readable Markdown, transparent engineering.*
+*An independent local-first Markdown desktop converter, built with transparent engineering.*
 
 </div>
