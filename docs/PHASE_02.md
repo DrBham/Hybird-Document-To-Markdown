@@ -1,107 +1,67 @@
 # Phase 2 — Software Architecture & Modular Design
 
-**Status:** In Progress  
-**Prerequisite:** Phase 1 — Environment & Repository Setup (Completed)  
-**Scope:** TXT, DOCX, and text-based PDF. Scanned-PDF OCR, PPTX, and HTML are out of scope.
+**Status:** Completed — local tests and learning assessment passed  
+**Next:** [Phase 3 — Custom TXT Conversion Engine](PHASE_03.md)
 
-## Objective
+## Completed Work
 
-Design a small, testable, extensible desktop conversion system before implementing file-format algorithms. The conversion pipeline will be custom-built. PySide6, python-docx, and pdfplumber may provide GUI and parsing capabilities, but no ready-made document-to-Markdown engine is planned.
+| Subphase | Deliverable | Status |
+|:---:|---|:---:|
+| 2.1 | `document_converter` package and core/converters/gui/services boundaries | Completed |
+| 2.2 | `BaseConverter` abstract interface and `ConversionResult` data model | Completed |
+| 2.3 | File validator, extension-based converter router and fake-converter tests | Completed |
+| 2.4 | Basic Markdown builder and UTF-8 exporter with overwrite protection | Completed |
+| 2.5 | Integration test, complete local test run and learning assessment | Completed |
 
-## Subphase plan
-
-| Subphase | Work item | Deliverable | Completion check | Status |
-|:---:|---|---|---|:---:|
-| 2.1 | Define module boundaries and responsibilities | Agreed source tree and responsibility map | Each module has one clear responsibility | 🟡 In progress |
-| 2.2 | Define conversion contracts and shared data types | Abstract converter interface and result types | Interface passes basic unit tests | ⚪ Planned |
-| 2.3 | Design file validation and converter routing | Validator and router components | TXT/DOCX/PDF route tests pass; unsupported inputs are rejected | ⚪ Planned |
-| 2.4 | Design Markdown builder and output handling | Shared builder and export contract | Escaping, output path, and error tests pass | ⚪ Planned |
-| 2.5 | Integrate architectural skeleton and assess knowledge | Minimal end-to-end scaffold and assessment | Test suite passes; architecture can be explained without notes | ⚪ Planned |
-
-> A subphase becomes Complete only after its deliverable is built and verified. Commit and push the complete Phase 2 milestone after the final review.
-
-## Proposed module layout
+## Source Layout Verified During Phase 2
 
 ```text
-src/
-  document_to_markdown/
+src/document_converter/
+  __init__.py
+  converters/__init__.py
+  core/
     __init__.py
-    core/
-      __init__.py
-      contracts.py
-      models.py
-      router.py
-      validator.py
-      markdown_builder.py
-    converters/
-      __init__.py
-      txt_converter.py
-      docx_converter.py
-      pdf_converter.py
-    ui/
-      __init__.py
-    services/
-      __init__.py
-      exporter.py
+    base_converter.py
+    models.py
+    validator.py
+    router.py
+    markdown_builder.py
+  gui/__init__.py
+  services/
+    __init__.py
+    markdown_exporter.py
 tests/
-  unit/
-  integration/
-docs/
-  PHASE_02.md
+  test_router.py
+  test_markdown_builder.py
+  test_markdown_exporter.py
+  test_markdown_integration.py
 ```
 
-This layout is a **proposal**, not a claim that these files already exist. Folder and file creation will be guided one subphase at a time.
+## Verification
 
-## Responsibility map
+The most recent reported local test command was:
 
-| Layer | Responsibility | Does not do |
-|---|---|---|
-| UI | Collect files, display progress and errors | Parse documents or generate Markdown |
-| Validation | Check paths, supported formats, and basic constraints | Choose visual styling |
-| Router | Select the appropriate custom converter | Parse PDF/DOCX internals |
-| Converters | Interpret source-specific content as structured elements | Write output files directly |
-| Markdown builder | Turn structured elements into Markdown | Read PDF/DOCX binary formats |
-| Export service | Write Markdown to an output path safely | Decide heading or list semantics |
-
-## Architecture overview
-
-```mermaid
-flowchart LR
-    A[Desktop UI] --> B[File Validation]
-    B --> C{Converter Router}
-    C --> T[TXT Engine]
-    C --> D[DOCX Engine]
-    C --> P[PDF Engine]
-    T --> M[Markdown Builder]
-    D --> M
-    P --> M
-    M --> E[Export Service]
-    classDef ui fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
-    classDef engine fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
-    classDef output fill:#dcfce7,stroke:#16a34a,color:#14532d;
-    class A,B ui;
-    class C,T,D,P,M engine;
-    class E output;
+```powershell
+$env:PYTHONPATH = "src"
+python -m pytest tests/ -v
 ```
 
-## Subphase 2.1 — First learning task
+**Reported result:** 14 passed (Windows, Python 3.13.0, pytest 9.2.0). The tests covered router dispatch through simulated converters, heading level validation, Markdown exporting and an integration between builder and exporter.
 
-Review the module tree and responsibility map. Explain why document parsing, Markdown formatting, file output, and UI events should be separated. Do not implement converters yet; the first practical action will be to create the package skeleton and verify that Python can import it.
+**Assessment:** The architecture assessment and follow-up review were passed. Git push status should be verified independently from the local test result.
 
-## Assessment questions
+## Current Limitations
 
-1. What is the difference between a converter and the converter router?
-2. Why should a converter return a result instead of writing `.md` files itself?
-3. Which component should reject an unsupported `.pptx` file?
-4. Why is Markdown escaping implemented in a shared component?
-5. What information should be preserved for debugging when PDF structure inference fails?
+- All converter routing tests used fake engines; no real TXT, DOCX or PDF conversion was implemented during Phase 2.
+- `MarkdownBuilder` supports basic headings and paragraphs only; lists, tables, Markdown escaping and advanced whitespace handling remain to be implemented and tested.
+- `MarkdownExporter` has UTF-8 writing and overwrite safeguards, but is not yet an atomic writer.
+- The file validator checks existence, regular-file status and extension; it does not verify document signatures or parse internal file structures.
+- The desktop GUI is not yet implemented.
 
-## Phase exit criteria
+## Design Rationale
 
-- [ ] Proposed module structure is implemented and importable.
-- [ ] Conversion interface and models are covered by unit tests.
-- [ ] Format validation and routing pass positive and negative tests.
-- [ ] Markdown builder and exporter have focused tests.
-- [ ] The architecture is demonstrated and the assessment is completed.
-- [ ] README and phase status are updated in English.
-- [ ] Phase 2 changes are committed and pushed to GitHub.
+The router selects an engine without parsing document content. `BaseConverter` defines a shared method contract. Concrete engines will return `ConversionResult` instances. The Markdown builder assembles formatted output; the exporter persists it separately to disk.
+
+## Next Step
+
+Begin Phase 3.1 by defining TXT input policies and representative fixtures before implementing the first real converter.
