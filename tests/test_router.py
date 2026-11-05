@@ -1,5 +1,6 @@
-
 from pathlib import Path
+
+import pytest
 
 from document_converter.core.base_converter import BaseConverter
 from document_converter.core.models import ConversionResult
@@ -32,10 +33,6 @@ def test_router_selects_txt_converter(tmp_path):
     assert isinstance(result, ConversionResult)
     assert result.source_format == "txt"
     assert result.markdown == "# Fake Markdown"
-
-
-import pytest
-
 
 @pytest.mark.parametrize(
     "extension, expected_markdown",
@@ -91,3 +88,9 @@ def test_router_rejects_unregistered_converter(tmp_path):
         match=r"No converter registered for: \.pdf"
     ):
         router.convert(test_file)
+
+
+def test_router_has_markitdown_defaults():
+    router = ConverterRouter()
+
+    assert set(router.converters) == {".txt", ".docx", ".pdf"}

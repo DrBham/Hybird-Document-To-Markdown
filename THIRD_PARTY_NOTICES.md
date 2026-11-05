@@ -2,29 +2,29 @@
 
 ## Purpose and status definitions
 
-This document tracks external software currently used during development and components **planned** for the project's revised MarkItDown-based conversion architecture. Listing a planned component **does not mean it has been installed, integrated, packaged, or redistributed**.
+This document tracks external software currently used during development and components planned for the project's MarkItDown-based conversion architecture. Listing a planned component **does not mean it has been installed, integrated, packaged, or redistributed**.
 
 This inventory is not a substitute for complete license texts, attribution records, or a release-specific audit of direct and transitive dependencies.
 
 **Project source license:** [MIT License](LICENSE). It applies to original content that contributors are authorized to license; third-party components retain their respective licenses.
 
-## Planned components for the revised architecture
+## Core and planned architecture components
 
 | Component | Intended role | License / distribution considerations | Upstream source | Status |
 |---|---|---|---|---|
-| Microsoft MarkItDown | Primary document-to-Markdown conversion engine | MIT; retain the applicable license and copyright notices when distributing | [Microsoft MarkItDown](https://github.com/microsoft/markitdown) | Planned; integration pending |
+| Microsoft MarkItDown 0.1.9 | Primary document-to-Markdown conversion engine | MIT; retain the applicable license and copyright notices when distributing | [Microsoft MarkItDown](https://github.com/microsoft/markitdown) | Installed and integrated with DOCX/PDF extras |
 | PySide6 / Qt for Python | Desktop GUI | Open-source and commercial licensing options; verify the applicable Qt modules and LGPL/GPL obligations for Windows packaging | [Qt for Python](https://doc.qt.io/qtforpython-6/) | Development dependency; full GUI pending |
 | `markitdown-ocr` | Optional image/OCR enhancement through a compatible Vision model | MIT; review plugin and dependency notices; API access may involve separate provider terms, data processing, and usage fees | [MarkItDown OCR plugin](https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr) | Planned; not yet integrated |
 | Compatible cloud Vision API / client | Optional image understanding and OCR | Provider/model not selected; verify SDK license, data-handling terms, authentication, and fees before use | To be determined | Planned; undecided |
 
 The `markitdown-ocr` plugin is designed around an LLM/Vision client. It should **not** be described as a guaranteed offline OCR engine. The application's ordinary local conversion path is intended to remain usable without online enhancement.
 
-## Existing development dependencies to reassess
+## Development and migration dependencies
 
 | Component | Existing development role | License / distribution consideration | Upstream source | Migration decision |
 |---|---|---|---|---|
-| `python-docx` | Direct DOCX parsing for the earlier custom-converter design | MIT; preserve applicable notices if redistributed | [python-docx](https://github.com/python-openxml/python-docx) | Retain or remove as a *direct* dependency only after Checkpoint B audit |
-| `pdfplumber` | Direct PDF extraction for the earlier custom-converter design | MIT; audit transitive packages if redistributed | [pdfplumber](https://github.com/jsvine/pdfplumber) | Retain or remove as a *direct* dependency only after Checkpoint B audit |
+| `python-docx` | Previously used for the custom-converter design and local test-fixture creation | MIT; preserve applicable notices if redistributed | [python-docx](https://github.com/python-openxml/python-docx) | Removed from the project's direct dependency list; not required by the production adapter |
+| `pdfplumber` | PDF extraction used by MarkItDown's PDF extra | MIT; audit transitive packages if redistributed | [pdfplumber](https://github.com/jsvine/pdfplumber) | Retained as a transitive MarkItDown dependency |
 | `pytest` | Development and automated tests | MIT; generally a development dependency, not required in the released application | [pytest](https://github.com/pytest-dev/pytest) | Retain for project testing |
 
 Other libraries may be installed transitively by MarkItDown, the GUI framework, or optional plugins. Their presence and distribution obligations must be audited against the **actual release environment** rather than assumed from this preliminary list.

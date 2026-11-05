@@ -72,6 +72,14 @@ class TXTConverter(BaseConverter):
     H1_UNDERLINE = re.compile(r"^={3,}$")
     H2_UNDERLINE = re.compile(r"^-{3,}$")
 
+    BULLET_PATTERN = re.compile(
+        r"^(\s*)([-*•])\s+(.+)$"
+        )
+
+    NUMBERED_PATTERN = re.compile(
+        r"^(\s*)(\d+)[.)]\s+(.+)$"
+        )
+
     def convert(self, file_path: Path) -> ConversionResult:
         """Read TXT and return its Markdown representation."""
 
@@ -137,7 +145,20 @@ class TXTConverter(BaseConverter):
                 index += 2
 
             else:
-                result.append(current)
+                bullet_match = self.BULLET_PATTERN.fullmatch(current)
+                numbered_match = self.NUMBERED_PATTERN.fullmatch(current)
+
+                if bullet_match:
+                    indentation, marker, content = bullet_match.groups()
+                    result.append(f"{indentation}- {content}")
+
+                elif numbered_match:
+                    indentation, number, content = numbered_match.groups()
+                    result.append(f"{indentation}{number}. {content}")
+
+                else:
+                    result.append(current)
+
                 index += 1
 
         return "\n".join(result)

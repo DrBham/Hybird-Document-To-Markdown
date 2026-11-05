@@ -20,12 +20,12 @@
 
 **Document to Markdown Desktop Converter** is an independent Python portfolio project for a Windows desktop application that converts common document formats into readable Markdown (`.md`). The intended experience is straightforward: select or drop documents, convert them, preview the Markdown, and export the results.
 
-The planned production conversion engine is [Microsoft MarkItDown](https://github.com/microsoft/markitdown). Rather than reimplementing format-specific conversion algorithms, the project focuses on the desktop workflow and the software around that engine: file validation, same-extension batch processing, per-file outcomes, Markdown preview and export, error handling, testing, and Windows packaging.
+The production conversion engine is [Microsoft MarkItDown](https://github.com/microsoft/markitdown). Rather than reimplementing format-specific conversion algorithms, the project focuses on the desktop workflow and the software around that engine: file validation, same-extension batch processing, per-file outcomes, Markdown preview and export, error handling, testing, and Windows packaging.
 
 > [!IMPORTANT]
-> **Development status:** The repository and development environment have been initialized, and an initial modular architecture has been built. Earlier work on a custom TXT converter is retained as an experimental learning milestone, but that approach has been superseded. Documentation is being migrated to the MarkItDown-based plan. **MarkItDown integration, multi-format verification, the complete GUI, OCR/Vision enhancements, and a packaged Windows release are not yet confirmed complete.**
+> **Development status:** MarkItDown 0.1.9 is integrated as the default local conversion engine, with basic smoke verification completed for TXT, DOCX, and text-based PDF files on Python 3.13. Earlier work on a custom TXT converter is retained as an experimental learning milestone, but that approach has been superseded for production. **The remaining MVP formats, batch workflow, complete GUI, OCR/Vision enhancements, and packaged Windows release are not yet confirmed complete.**
 
-This is an independent application that plans to integrate MarkItDown; it is **not an official Microsoft product**.
+This is an independent application that uses MarkItDown; it is **not an official Microsoft product**.
 
 ## Planned Application Features
 
@@ -40,7 +40,7 @@ Select files using a Windows file picker or drag and drop them into the planned 
 <td width="50%" valign="top">
 
 ### 📚 Multi-Format Conversion
-Integrate MarkItDown as the primary engine and verify each target document format with representative test files.
+Use MarkItDown as the primary engine. TXT, DOCX, and text-based PDF have basic verification; the remaining target formats still require representative tests.
 
 </td>
 </tr>
@@ -78,13 +78,13 @@ Plan image-text extraction and visual descriptions with explicit user consent an
 
 ## Target Formats
 
-The MVP targets the following inputs. Actual support and output quality **must be verified after MarkItDown integration**.
+The MVP targets the following inputs. Each format's output quality must be verified with representative documents.
 
 | Category | File extensions | Verification status |
 |---|---|---|
-| Plain text | `.txt` | Pending integration testing |
-| Word | `.docx` | Pending integration testing |
-| PDF | `.pdf` | Pending integration testing |
+| Plain text | `.txt` | Basic smoke test passed |
+| Word | `.docx` | Basic smoke test passed |
+| PDF | `.pdf` | Basic text-based smoke test passed; scanned PDFs require separate handling |
 | PowerPoint | `.pptx` | Pending integration testing |
 | Excel | `.xlsx` | Pending integration testing |
 | Tabular data | `.csv` | Pending integration testing |
@@ -98,7 +98,7 @@ Additional formats—including emails, archives, audio, EPUB, LOG, and standalon
 ```mermaid
 flowchart TD
     A["File Picker / Drag & Drop (planned)"] --> B["File & Batch Validation"]
-    B --> C["Conversion Service / MarkItDown (planned)"]
+    B --> C["Conversion Service / MarkItDown"]
     C --> D["Markdown Result & Per-File Status"]
     D --> E["Markdown Preview (planned)"]
     E --> F["Export .md (planned)"]
@@ -106,7 +106,7 @@ flowchart TD
     G -. "Unavailable: continue local conversion" .-> D
 ```
 
-The flow above represents the **target architecture**, not a completed or verified runtime. Existing modules will be audited and reused where appropriate. No major refactor or deletion of the experimental TXT implementation is required solely for this documentation checkpoint.
+The flow above represents the **target application architecture**. The local validation, MarkItDown adapter, conversion result, and Markdown export modules exist; the GUI, batch orchestration, and optional online enhancement remain incomplete. The experimental TXT implementation is retained for development history and is not the default production engine.
 
 ### Local-first with optional online enhancement
 
@@ -126,7 +126,7 @@ The selected Vision model/provider has **not yet been finalized**. Azure Documen
 **🐍 Conversion & Enhancement**
 
 - Python 3.13 — current development environment
-- [Microsoft MarkItDown](https://github.com/microsoft/markitdown) — planned primary conversion engine
+- [Microsoft MarkItDown](https://github.com/microsoft/markitdown) 0.1.9 — primary conversion engine
 - [markitdown-ocr](https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr) — planned OCR/Vision plugin
 - Compatible Vision model API — provider not yet selected
 
@@ -144,11 +144,11 @@ The selected Vision model/provider has **not yet been finalized**. Azure Documen
 </tr>
 </table>
 
-Dependency compatibility, exact package versions, and any additional components will be checked during their implementation checkpoints. The previous environment included `python-docx` and `pdfplumber` as direct dependencies for the superseded custom-converter approach; their future direct use has **not** been decided.
+MarkItDown is installed with only the `docx` and `pdf` extras for the current checkpoint. `python-docx` is no longer a direct application dependency, while `pdfplumber` is retained transitively by MarkItDown's PDF extra. Additional format extras will be added only when their MVP formats are implemented and tested.
 
 ## Development Roadmap
 
-The milestone workflow is **implement → test → document → commit → push**. Commits are created at stable checkpoints, not for every small edit.
+The milestone workflow is **implement → test → document → commit → push**. Commits are created at stable checkpoints, not for every small edit. After a checkpoint is completed, the next checkpoint is marked **In progress** so the roadmap always reflects the active work.
 
 | Stage | Milestone | Status |
 |:---:|---|:---:|
@@ -157,13 +157,13 @@ The milestone workflow is **implement → test → document → commit → push*
 | 02 | Initial modular architecture | 🟢 Completed |
 | 03 | Experimental custom TXT converter | ⚪ Superseded |
 | A | Documentation and scope migration | 🟡 In progress |
-| B | MarkItDown integration and basic TXT/DOCX/PDF verification | ⚪ Planned |
-| C | Multi-format verification, same-extension batches, validation, and export | ⚪ Planned |
+| B | MarkItDown integration and basic TXT/DOCX/PDF verification | 🟢 Completed |
+| C | Multi-format verification, same-extension batches, validation, and export | 🟡 In progress |
 | D | PySide6 desktop GUI, file picker, drag-and-drop, status, and preview | ⚪ Planned |
 | E | Optional OCR/Vision, credentials, consent, and offline fallback | ⚪ Planned |
 | F | Regression/integration tests, Windows packaging, license audit, and release | ⚪ Planned |
 
-**Current checkpoint:** A — Documentation and Scope Migration. The earlier TXT experiment remains part of the project's Git history; it is no longer the intended production conversion engine.
+**Current checkpoint:** C — Multi-Format & Batch Processing. Checkpoint B is complete: MarkItDown is the default engine for TXT, DOCX, and PDF. Work now moves to representative verification of the remaining MVP formats before same-extension batch processing, broader validation, error handling, and export behavior are finalized.
 
 ## Development Setup
 
@@ -179,16 +179,26 @@ python -m pip check
 ```
 
 > [!NOTE]
-> The commands reproduce the **currently committed development dependency snapshot**, not the future MarkItDown-based application. Do not interpret them as a working end-user conversion installation. Dependency changes and installation are scheduled for **Checkpoint B**.
+> These commands reproduce the development environment, including MarkItDown's DOCX and PDF extras. This is still a source development setup, not an end-user Windows installation.
 
 ### Dependency Management
 
 | File | Purpose |
 |---|---|
-| `requirements.in` | Direct development dependencies; to be reviewed during Checkpoint B |
-| `requirements.txt` | Existing pinned environment snapshot; to be updated after the integration dependencies are verified |
+| `requirements.in` | Direct development dependencies, including the selected MarkItDown extras |
+| `requirements.txt` | Pinned development environment snapshot used for reproducible setup |
 
 Use a local `.venv` and keep secrets, credentials, generated files, and machine-specific settings out of version control.
+
+### Running Tests
+
+Run the automated test suite from the repository root:
+
+```powershell
+python -m pytest -q
+```
+
+The repository-level `pytest.ini` adds the `src` directory to pytest's Python import path. This allows tests to import `document_converter` directly from the source tree before the application is packaged or installed as a project. It affects test discovery and imports only; it is not part of the application runtime and is not a generated cache file.
 
 ## Conversion Quality & Engineering Principles
 
@@ -204,7 +214,7 @@ Use a local `.venv` and keep secrets, credentials, generated files, and machine-
 
 Original project code and documentation are made available under the repository's [MIT License](LICENSE), insofar as the contributors own the rights to license them. Third-party components remain under their respective licenses.
 
-The project plans to use [Microsoft MarkItDown](https://github.com/microsoft/markitdown) as its primary document conversion engine. The planned GUI and optional enhancements are separate application-level contributions. This project is not affiliated with or endorsed by Microsoft or the third-party maintainers.
+The project uses [Microsoft MarkItDown](https://github.com/microsoft/markitdown) as its primary document conversion engine. The planned GUI and optional enhancements are separate application-level contributions. This project is not affiliated with or endorsed by Microsoft or the third-party maintainers.
 
 See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for the current/planned dependency inventory and the release-license review checklist.
 

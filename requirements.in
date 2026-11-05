@@ -2,6 +2,5 @@
 # Document to Markdown Desktop Converter
 
 PySide6
-python-docx
-pdfplumber
+markitdown[docx,pdf]==0.1.9
 pytest

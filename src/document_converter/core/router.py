@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 from .base_converter import BaseConverter
@@ -9,7 +8,20 @@ from .validator import validate_file
 class ConverterRouter:
     """Route documents to their registered converters."""
 
-    def __init__(self, converters: dict[str, BaseConverter]):
+    def __init__(
+        self,
+        converters: dict[str, BaseConverter] | None = None,
+    ):
+        if converters is None:
+            from ..converters.markitdown_converter import MarkItDownConverter
+
+            engine = MarkItDownConverter()
+            converters = {
+                ".txt": engine,
+                ".docx": engine,
+                ".pdf": engine,
+            }
+
         self.converters = converters
 
     def convert(self, file_path: Path) -> ConversionResult:
