@@ -10,7 +10,7 @@
 [![Platform](https://img.shields.io/badge/PLATFORM-WINDOWS-0078D4?style=for-the-badge&logo=windows&logoColor=white)](#technology-stack)
 [![Engines](https://img.shields.io/badge/CONVERTERS-3%20CUSTOM-16A34A?style=for-the-badge)](#supported-formats)
 
-**[Overview](#overview) · [Features](#planned-features) · [Architecture](#custom-conversion-architecture) · [Roadmap](#development-roadmap) · [Credits](#license--credits)**
+**[Overview](#overview) · [Features](#planned-features) · [Architecture](#custom-conversion-architecture) · [Roadmap](#development-roadmap) · [Phase 2 Guide](docs/PHASE_02.md) · [Credits](#license--credits)**
 
 </div>
 
@@ -152,6 +152,8 @@ Every milestone follows **implement → test → document → commit → push**.
 | 07 | Automated tests and conversion quality evaluation | ⚪ Planned |
 | 08 | Windows packaging, documentation, and release | ⚪ Planned |
 
+**Current milestone:** [Phase 2 — Software Architecture & Modular Design](docs/PHASE_02.md). Work is divided into five independently testable subphases.
+
 **Legend:** 🟢 Completed · 🟡 In progress · ⚪ Planned
 
 ## Development Setup
@@ -209,7 +211,7 @@ Test extraction completeness, structural fidelity, edge cases, and error handlin
 
 This is an independent portfolio project. [Microsoft MarkItDown](https://github.com/microsoft/markitdown) was considered early in planning but is **not used as a project dependency**. The repository retains its original `Hybrid-Document-To-Markdown` URL for continuity.
 
-If a project license is added, its terms will be in the root `LICENSE` file. Third-party dependencies remain governed by their respective licenses, including distribution obligations for PySide6/Qt. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md); its notices must be updated and verified before packaging or release.
+If a project license is added, its terms will be in the root `LICENSE` file. Third-party dependencies remain governed by their respective licenses, including distribution obligations for PySide6/Qt. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for current dependencies and the licensing review checklist.
 
 ---
 

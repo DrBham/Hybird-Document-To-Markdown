@@ -1,31 +1,28 @@
-
 # Third-Party Notices
 
-This project uses third-party open-source libraries
-to support its desktop interface, document parsing,
-and automated testing.
+## Scope
 
-## Project Dependencies
+This independent project currently uses third-party libraries for its desktop interface, source-document parsing, and testing. The document-to-Markdown conversion algorithms are intended to be implemented in this repository.
 
-- PySide6 — Desktop GUI framework
-- python-docx — DOCX document parsing
-- pdfplumber — PDF document parsing
-- pytest — Automated testing
+| Package | Purpose | Upstream |
+|---|---|---|
+| PySide6 / Qt for Python | Desktop GUI | https://doc.qt.io/qtforpython-6/ |
+| python-docx | DOCX parsing | https://github.com/python-openxml/python-docx |
+| pdfplumber | PDF text and layout extraction | https://github.com/jsvine/pdfplumber |
+| pytest | Development testing | https://github.com/pytest-dev/pytest |
 
-## Original Implementation
+## Historical note
 
-The document-to-Markdown conversion logic is
-developed independently as part of this project.
+Microsoft MarkItDown was considered during project planning, but is **not** included in the current dependency set and is **not** part of the planned conversion pipeline.
 
-## License Compliance
+## Licensing and release checklist
 
-Each third-party dependency retains its respective
-copyright and license terms.
+This document is an inventory, **not yet a complete set of redistribution notices**. Before distributing an executable or source bundle:
 
-Detailed license notices and distribution requirements
-will be reviewed and included before the first release.
+1. Check the exact versions and licenses of all distributed direct and transitive dependencies.
+2. Review PySide6/Qt licensing, including relevant LGPL/GPL or commercial-license obligations and the packaging approach.
+3. Include required copyright statements, license texts, and other notices for redistributed components.
+4. Confirm that any custom project `LICENSE` applies only to material the project author is entitled to license.
+5. Update this document to reflect the actual release contents.
 
-## Microsoft MarkItDown
-
-Microsoft MarkItDown is not used in the current
-implementation of this project.
+No endorsement by any third-party maintainer is implied.
