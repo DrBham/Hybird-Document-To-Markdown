@@ -24,11 +24,17 @@ class PaddleOCRBackend:
         *,
         model_version: str,
         language: str = "en",
+        orientation_model_name: str | None = None,
+        detection_model_name: str | None = None,
+        recognition_model_name: str | None = None,
         engine_factory: Callable[..., Any] | None = None,
     ):
         self._model_directory = model_directory.expanduser().resolve()
         self._model_version = model_version
         self._language = language
+        self._orientation_model_name = orientation_model_name
+        self._detection_model_name = detection_model_name
+        self._recognition_model_name = recognition_model_name
         self._engine_factory = engine_factory
         self._engine: Any | None = None
 
@@ -82,14 +88,33 @@ class PaddleOCRBackend:
                 "recognition directories are required."
             )
 
-        self._engine = factory(
-            lang=self._language,
-            text_detection_model_dir=str(detection),
-            text_recognition_model_dir=str(recognition),
-            use_doc_orientation_classify=False,
-            use_doc_unwarping=False,
-            use_textline_orientation=False,
-        )
+        options: dict[str, Any] = {
+            "text_detection_model_dir": str(detection),
+            "text_recognition_model_dir": str(recognition),
+            "use_doc_orientation_classify": False,
+            "use_doc_unwarping": False,
+            "use_textline_orientation": False,
+            "enable_mkldnn": False,
+        }
+        if self._orientation_model_name:
+            orientation = self._model_directory / "orientation"
+            if not orientation.is_dir():
+                raise PaddleOCRBackendError(
+                    "The local OCR model pack names an orientation model but "
+                    "contains no orientation directory."
+                )
+            options["doc_orientation_classify_model_name"] = (
+                self._orientation_model_name
+            )
+            options["doc_orientation_classify_model_dir"] = str(orientation)
+            options["use_doc_orientation_classify"] = True
+        if self._detection_model_name:
+            options["text_detection_model_name"] = self._detection_model_name
+        if self._recognition_model_name:
+            options["text_recognition_model_name"] = self._recognition_model_name
+        if not self._detection_model_name and not self._recognition_model_name:
+            options["lang"] = self._language
+        self._engine = factory(**options)
         return self._engine
 
     @classmethod

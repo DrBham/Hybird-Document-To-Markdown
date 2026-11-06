@@ -23,10 +23,15 @@ def test_pipeline_requires_verified_model_pack(tmp_path):
 def test_pipeline_builds_after_integrity_check(tmp_path):
     model_id = "hybrid-document-intelligence"
     model_directory = tmp_path / model_id
-    (model_directory / "detection").mkdir(parents=True)
+    (model_directory / "orientation").mkdir(parents=True)
+    (model_directory / "detection").mkdir()
     (model_directory / "recognition").mkdir()
     artifacts = []
-    for relative in ("detection/model.bin", "recognition/model.bin"):
+    for relative in (
+        "orientation/model.bin",
+        "detection/model.bin",
+        "recognition/model.bin",
+    ):
         payload = relative.encode("utf-8")
         target = model_directory / relative
         target.write_bytes(payload)
@@ -38,7 +43,17 @@ def test_pipeline_builds_after_integrity_check(tmp_path):
             }
         )
     (model_directory / "model-manifest.json").write_text(
-        json.dumps({"version": "0.1.0", "artifacts": artifacts}),
+        json.dumps(
+            {
+                "version": "0.1.0",
+                "artifacts": artifacts,
+                "metadata": {
+                    "orientation_model": "PP-LCNet_x1_0_doc_ori",
+                    "detection_model": "PP-OCRv5_mobile_det",
+                    "recognition_model": "latin_PP-OCRv5_mobile_rec",
+                },
+            }
+        ),
         encoding="utf-8",
     )
 

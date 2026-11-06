@@ -15,7 +15,7 @@ This file records important third-party software used or planned by **Hybrid Doc
 |---|---:|---|---|---|
 | [Microsoft MarkItDown](https://github.com/microsoft/markitdown) | 0.1.9 | Primary document conversion engine | MIT | Installed and integrated |
 | [PySide6 / Qt for Python](https://doc.qt.io/qtforpython-6/) | 6.12.0 | Windows desktop framework | LGPL-3.0 / GPL-3.0 / commercial options | Installed and integrated |
-| [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) | 3.7.0 | Optional local OCR baseline | Apache-2.0 | Declared in the separate Phase E dependency layer |
+| [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) | 3.7.0 | Optional local OCR baseline and official pretrained model source | Apache-2.0 | E2 baseline reviewed; license notice required in a distributed model pack |
 | [PaddlePaddle](https://github.com/PaddlePaddle/Paddle) | 3.3.1 | Optional local inference runtime | Apache-2.0 | Declared in the separate Phase E dependency layer |
 | [Press Start 2P](https://github.com/google/fonts/tree/main/ofl/pressstart2p) | 3.000 | Pixel heading font | SIL Open Font License 1.1 | Bundled with OFL and FONTLOG |
 | [pytest](https://github.com/pytest-dev/pytest) | 9.2.0 | Development testing | MIT | Development only |
@@ -39,6 +39,8 @@ These packages are installed through the selected MarkItDown extras. Versions re
 ## Local model and dataset boundary
 
 The Phase E interfaces are project code, but pretrained weights, fine-tuned checkpoints, and training datasets remain subject to their own licenses and terms. Declaring PaddleOCR and PaddlePaddle does not grant permission to redistribute every compatible model or dataset.
+
+The E2 review covers only the official `PP-LCNet_x1_0_doc_ori`, `PP-OCRv5_mobile_det`, and `latin_PP-OCRv5_mobile_rec` artifacts used by the reproducible baseline. The review concluded that an E5 pack may redistribute those artifacts under Apache-2.0 when the applicable license, attribution, provenance, and hashes accompany the pack. See `docs/evaluations/E2_MODEL_LICENSE_REVIEW.md`.
 
 Before a model pack is published, the project must record its upstream model, dataset provenance, training changes, license, checksum, version, evaluation results, and required notices. Only artifacts whose licenses permit the intended redistribution may be included.
 

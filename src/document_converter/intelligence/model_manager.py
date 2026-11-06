@@ -100,6 +100,19 @@ class LocalModelManager:
         """Return the validated persistent directory for one model pack."""
         return self.root / self._safe_model_id(model_id)
 
+    def read_manifest(self, model_id: str) -> dict[str, Any]:
+        """Read a verified pack manifest for runtime configuration."""
+        inspection = self.inspect(model_id)
+        if inspection.state != ModelState.READY:
+            raise ValueError(
+                f"local model pack is not ready: {inspection.state.value}"
+            )
+        manifest_path = self.model_directory(model_id) / self.MANIFEST_NAME
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if not isinstance(manifest, dict):
+            raise ValueError("model manifest must contain an object")
+        return manifest
+
     @staticmethod
     def _sha256(path: Path) -> str:
         digest = hashlib.sha256()

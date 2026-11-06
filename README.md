@@ -6,8 +6,8 @@
 
 ### A local-first Windows desktop converter powered by Python and Microsoft MarkItDown
 
-[![Development Status](https://img.shields.io/badge/status-E2%20OCR%20Baseline%20WIP-7C3AED?style=for-the-badge)](#-roadmap)
-[![Tests](https://img.shields.io/badge/tests-91%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
+[![Development Status](https://img.shields.io/badge/status-E3%20Dataset%20%26%20Training%20WIP-7C3AED?style=for-the-badge)](#-roadmap)
+[![Tests](https://img.shields.io/badge/tests-97%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
 [![Python](https://img.shields.io/badge/python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](#-technology-stack)
 
 [![MarkItDown](https://img.shields.io/badge/MarkItDown-0.1.9-2563EB?style=flat-square)](https://github.com/microsoft/markitdown)
@@ -30,7 +30,7 @@
 ---
 
 > [!IMPORTANT]
-> Phase D is complete. Phase E—fully local document intelligence—is active, with E2 (OCR baseline and model pack) as the current checkpoint. Installer work is intentionally deferred until Phase E is complete.
+> Phase D and checkpoints E0–E2 are complete. Phase E—fully local document intelligence—continues with E3 (dataset and reproducible training) as the current checkpoint. Installer work remains deferred until Phase E is complete.
 
 > [!NOTE]
 > This is an independent portfolio project that uses [Microsoft MarkItDown](https://github.com/microsoft/markitdown). It is not an official Microsoft product and is not affiliated with or endorsed by Microsoft.
@@ -114,15 +114,18 @@
 <li>Lazy PaddleOCR adapter with no cloud API dependency</li>
 <li>OOXML image extraction and local PDF-page rendering</li>
 <li>Corpus-level exact-match and character-error-rate evaluation</li>
-<li>91 passing automated tests</li>
+<li>Reproducible OCR model-pack bootstrap and SHA-256 manifest generation</li>
+<li>Real local OCR and image-only PDF pipeline smoke tests</li>
+<li>Measured E2 acceptance gate covering quality, resources, GUI, integrity, and licensing</li>
+<li>97 passing automated tests</li>
 </ul>
 </td>
 <td width="50%" valign="top">
 <h3>🚧 WIP &amp; planned</h3>
 <ul>
-<li><strong>Active — E2:</strong> assemble and verify the first local OCR model pack</li>
-<li><strong>Active — E2:</strong> benchmark real scans, screenshots, and diagram labels</li>
-<li><strong>Planned — E3:</strong> dataset provenance and reproducible fine-tuning</li>
+<li><strong>Completed — E2:</strong> verified offline OCR baseline and model pack</li>
+<li><strong>Active — E3:</strong> dataset provenance, stable splits, and quality controls</li>
+<li><strong>Active — E3:</strong> reproducible preprocessing and fine-tuning workflow</li>
 <li><strong>Planned — E4:</strong> diagram and informative-image understanding</li>
 <li><strong>Planned — E5:</strong> end-to-end GUI acceptance and public model pack</li>
 <li><strong>Deferred:</strong> Windows bootstrap installer and selectable model packs</li>
@@ -225,13 +228,45 @@ The file-type selector starts at TXT. Choose another format when needed, then br
 The base converter does not install machine-learning packages. Developers who work on Phase E can create a separate environment layer:
 
 ```powershell
-python -m pip install -r requirements-intelligence.in
+python -m pip install -r requirements-intelligence.txt
 ```
 
-This optional layer uses PaddleOCR as the first pretrained OCR baseline. Model weights are not bundled yet. The GUI keeps **Analyze document images locally** disabled until a versioned model pack passes its integrity check.
+This optional layer uses PaddleOCR as the first pretrained OCR baseline. Build the current versioned model pack after installing the dependencies:
+
+```powershell
+$env:PYTHONPATH = "src"
+python scripts/bootstrap_ocr_model.py --source huggingface
+```
+
+The bootstrap stores the models in the per-user application-data directory, records their SHA-256 checksums, and verifies the pack before use. The GUI enables **Analyze document images locally** only while that integrity check passes.
 
 > [!IMPORTANT]
-> No API key or hosted provider is used. Installing the optional Python packages alone does not complete Phase E; tested local weights, document-image extraction, and quality benchmarks are still required.
+> No API key or hosted inference provider is used. The one-time bootstrap downloads upstream model weights; inference after that runs locally. The E2 license review is complete, but an E5 public pack must include the Apache-2.0 notice and pass a final artifact audit.
+
+Reproduce the attributed E2 smoke evaluation:
+
+```powershell
+python scripts/fetch_e2_corpus.py
+$env:PYTHONPATH = "src"
+python scripts/evaluate_e2_corpus.py
+```
+
+The downloaded corpus and generated results stay in ignored local directories. Their source URLs, licenses, and checksums remain tracked in the repository manifest.
+
+The complete E2 gate additionally consumes the synthetic benchmark and GUI-acceptance JSON evidence:
+
+```powershell
+$env:PYTHONPATH = "src"
+python scripts/generate_e2_fixture.py .e2-results/network.png
+python scripts/generate_e2_fixture.py .e2-results/network.pdf
+python scripts/benchmark_ocr.py .e2-results/network.png `
+  --reference "TOPOLOGI JARINGAN KANTOR INTERNET ROUTER UTAMA 1 GBPS SWITCH LANTAI 1 KOMPUTER ADMIN" `
+  --json-output .e2-results/network-benchmark.json
+python scripts/run_e2_gui_acceptance.py .e2-results/network.pdf
+python scripts/validate_e2_acceptance.py
+```
+
+The thresholds are versioned in `datasets/manifests/e2-acceptance-policy.json`; generated evidence remains outside Git.
 
 ### 🧑‍💻 Use the Core API
 
@@ -374,6 +409,7 @@ This design provides:
 │       │   ├── evaluation.py
 │       │   ├── extractor.py
 │       │   ├── model_manager.py
+│       │   ├── model_pack.py
 │       │   ├── models.py
 │       │   ├── paddle_ocr.py
 │       │   ├── pipeline.py
@@ -394,12 +430,28 @@ This design provides:
 │       └── PressStart2P-FONTLOG.txt
 ├── tests/
 ├── datasets/
+│   ├── manifests/
+│   │   ├── e2-acceptance-policy.json
+│   │   └── e2-paddleocr-smoke.json
 │   └── README.md
+├── docs/
+│   └── evaluations/
+│       ├── E2_BASELINE.md
+│       └── E2_MODEL_LICENSE_REVIEW.md
 ├── scripts/
-│   └── evaluate_ocr.py
+│   ├── benchmark_ocr.py
+│   ├── bootstrap_ocr_model.py
+│   ├── evaluate_e2_corpus.py
+│   ├── evaluate_ocr.py
+│   ├── fetch_e2_corpus.py
+│   ├── generate_e2_fixture.py
+│   ├── run_e2_gui_acceptance.py
+│   ├── run_e2_pipeline.py
+│   └── validate_e2_acceptance.py
 ├── pytest.ini
 ├── requirements.in
 ├── requirements-intelligence.in
+├── requirements-intelligence.txt
 ├── requirements.txt
 ├── THIRD_PARTY_NOTICES.md
 └── README.md
@@ -461,8 +513,8 @@ python -m pytest -q
 <h3>⚠️ Current limitations</h3>
 <ul>
 <li>A packaged <code>.exe</code> is not available yet.</li>
-<li>End-to-end analysis has not passed acceptance testing with a real model pack yet.</li>
-<li>The first public, trained model pack is not published yet.</li>
+<li>The E2 baseline passed local end-to-end acceptance, but it is not a full diagram-understanding model.</li>
+<li>The first public, project-trained model pack is not published yet.</li>
 <li>Complex layouts may lose fidelity.</li>
 <li>Encrypted or damaged files may fail.</li>
 <li>The 100 MiB limit is not yet configurable in the GUI.</li>
@@ -491,7 +543,7 @@ python -m pytest -q
 | Version control | Git and GitHub | History and collaboration |
 | Target OS | Windows | Development and release target |
 
-Base dependencies are declared in `requirements.in`, while the optional Phase E runtime is isolated in `requirements-intelligence.in`. The reproducible base development snapshot is pinned in `requirements.txt`.
+Base dependencies are declared in `requirements.in`, while the optional Phase E runtime is declared in `requirements-intelligence.in`. Reproducible snapshots are pinned separately in `requirements.txt` and `requirements-intelligence.txt`.
 
 ## 🗺️ Roadmap
 
@@ -504,7 +556,7 @@ Base dependencies are declared in `requirements.in`, while the optional Phase E 
 | E — Local document intelligence | OCR, embedded-image extraction, diagram understanding, training/evaluation, and publishable model packs | 🚧 In progress |
 | F — Release | Regression testing, bootstrap installer, selectable feature packs, license audit, and GitHub release | ⏸️ Deferred until E is complete |
 
-### Current checkpoint: E2 — OCR Baseline & Model Pack
+### Current checkpoint: E3 — Dataset & Training
 
 Phase D delivered:
 
@@ -529,7 +581,30 @@ Checkpoint E now has a local, testable foundation:
 - Optional dependency layer that does not enlarge the base converter
 - GUI status that clearly distinguishes missing, damaged, ready, and not-yet-connected model states
 - No API keys, cloud uploads, or hosted Vision client
-- 91 passing automated tests
+- Reproducible mobile OCR model-pack bootstrap
+- Successful real OCR and image-only PDF end-to-end smoke tests
+- Reproducible E2 acceptance policy and machine-readable result
+- Real GUI conversion acceptance with the verified local model
+- Completed E2 model-license review with an E5 release-compliance boundary
+- 97 passing automated tests
+
+Current E2 baseline:
+
+| Evidence | Result |
+|---|---:|
+| Local model pack | Ready; 19.10 MiB; SHA-256 verified |
+| Primary optional OCR runtime | ~515 MiB installed in the development environment |
+| OCR models | PP-LCNet orientation + PP-OCRv5 mobile detection + Latin recognition |
+| Synthetic network-diagram CER | 2.38% |
+| Cold / warm CPU inference | 5.41 s / 2.75 s average |
+| Process RSS increase | 264.82 MiB |
+| Official five-fixture snippet recall | 100% (24/24); smoke corpus only |
+| Rotated-book snippet recall | Improved from 0/4 in v1 to 4/4 in v2 |
+| Image-only PDF pipeline | Passed; local analysis appended to Markdown |
+| GUI acceptance | Passed; option enabled, conversion succeeded, analysis rendered |
+| E2 acceptance gate | Passed; 12/12 checks |
+
+See the full [E2 baseline report](docs/evaluations/E2_BASELINE.md) and [model-license review](docs/evaluations/E2_MODEL_LICENSE_REVIEW.md) for the evidence and release boundary. The ~515 MiB optional development runtime is isolated from the base converter and remains an E5 packaging optimization target.
 
 ### Phase E execution plan
 
@@ -537,23 +612,23 @@ Checkpoint E now has a local, testable foundation:
 |---|---|---|:---:|
 | E0 — Architecture | Remove the cloud path; define local result, backend, renderer, and model interfaces | No API key or hosted runtime remains; unit tests pass | ✅ Completed |
 | E1 — Extraction pipeline | Extract OOXML media, render PDF pages, merge analysis with document Markdown | DOCX/PPTX/XLSX extraction and real PDF rendering are tested | ✅ Completed |
-| E2 — OCR baseline & model pack | Install the optional runtime, assemble local detection/recognition weights, and run representative OCR tests | A verified model pack loads offline and produces measured results through the application pipeline | 🚧 Active |
-| E3 — Dataset & training | Register licensed datasets, create stable splits, add preprocessing and fine-tuning scripts | Training is reproducible; every dataset and checkpoint has provenance and license metadata | ⏳ Planned |
+| E2 — OCR baseline & model pack | Operate the local runtime and model pack, then evaluate representative OCR inputs | A verified model pack loads offline and meets documented quality/resource thresholds through the application pipeline | ✅ Completed |
+| E3 — Dataset & training | Register licensed datasets, create stable splits, add preprocessing and fine-tuning scripts | Training is reproducible; every dataset and checkpoint has provenance and license metadata | 🚧 Active — WIP |
 | E4 — Visual understanding | Detect diagram elements, labels, arrows, and relationships beyond plain OCR | Representative topology, flowchart, chart, and informative-image fixtures produce structured relationships | ⏳ Planned |
 | E5 — Product integration | Refine GUI progress/errors, run quality and performance acceptance, publish the first ready-to-use model pack | A new user can enable local analysis and use it without training a model | ⏳ Planned |
 
 #### What we work on next
 
-E2 is the immediate development stage:
+E3 is the immediate development stage. The E2 baseline, resource thresholds, GUI acceptance, integrity checks, and model-license review are complete. Work now continues with:
 
-1. Install PaddleOCR and PaddlePaddle from `requirements-intelligence.in` in the development environment.
-2. Select a redistribution-compatible pretrained OCR baseline.
-3. Build the first `hybrid-document-intelligence` model directory and SHA-256 manifest.
-4. Test real scans, screenshots, tables, and diagram labels in Indonesian and English.
-5. Record speed, memory use, exact-match rate, and character error rate.
-6. Connect the verified pack to the GUI and repeat regression testing.
+1. Register candidate datasets with source, license, language, and privacy metadata.
+2. Define stable Indonesian/English train, validation, and held-out test splits.
+3. Add deterministic preprocessing and dataset-validation commands.
+4. Add full manually verified references for per-category CER measurement.
+5. Establish a reproducible fine-tuning configuration and checkpoint manifest.
+6. Compare every trained checkpoint with the frozen E2 baseline before promotion.
 
-E2 is complete only when the model works through the actual application pipeline without internet access. Installing a Python package by itself does not complete this checkpoint.
+E2 closed with 12/12 acceptance checks passing. Its five-file official corpus remains a smoke corpus; broader dataset construction, full-reference evaluation, and model training intentionally belong to E3.
 
 ### Phase E definition of done
 
@@ -569,7 +644,7 @@ Phase E can be marked complete when:
 - all regression and Phase E acceptance tests pass.
 
 > [!IMPORTANT]
-> Phase E is not complete yet. E0 and E1 are complete; E2 is active. The GUI intentionally keeps local analysis unavailable until the first model pack passes integrity and end-to-end acceptance tests.
+> Phase E is not complete yet. E0, E1, and E2 are complete; E3 is active. The GUI exposes local analysis when a valid model pack is installed and falls back safely when the pack is missing or damaged. Public packaging remains an E5 deliverable and requires the recorded Apache-2.0 notices plus a final artifact audit.
 
 Development follows this milestone cycle:
 

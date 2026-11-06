@@ -22,7 +22,8 @@ class FakeEngine:
 
 def test_paddle_adapter_maps_official_result_shape(tmp_path):
     model_directory = tmp_path / "model"
-    (model_directory / "detection").mkdir(parents=True)
+    (model_directory / "orientation").mkdir(parents=True)
+    (model_directory / "detection").mkdir()
     (model_directory / "recognition").mkdir()
     image = tmp_path / "topology.png"
     image.write_bytes(b"fixture")
@@ -35,6 +36,9 @@ def test_paddle_adapter_maps_official_result_shape(tmp_path):
     result = PaddleOCRBackend(
         model_directory,
         model_version="test-1",
+        orientation_model_name="PP-LCNet_x1_0_doc_ori",
+        detection_model_name="PP-OCRv5_mobile_det",
+        recognition_model_name="latin_PP-OCRv5_mobile_rec",
         engine_factory=factory,
     ).analyze(image)
 
@@ -45,6 +49,14 @@ def test_paddle_adapter_maps_official_result_shape(tmp_path):
     assert result.text_regions[0].bounds.right == 80
     assert result.text_regions[0].confidence == 0.98
     assert factory_calls[0]["use_doc_unwarping"] is False
+    assert factory_calls[0]["use_doc_orientation_classify"] is True
+    assert factory_calls[0]["doc_orientation_classify_model_name"] == (
+        "PP-LCNet_x1_0_doc_ori"
+    )
+    assert factory_calls[0]["enable_mkldnn"] is False
+    assert factory_calls[0]["text_detection_model_name"] == (
+        "PP-OCRv5_mobile_det"
+    )
 
 
 def test_paddle_adapter_requires_complete_local_model(tmp_path):
