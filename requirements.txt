@@ -7,6 +7,7 @@ cobble==0.1.4
 colorama==0.4.6
 cryptography==50.0.2
 defusedxml==0.7.1
+et_xmlfile==2.0.0
 flatbuffers==25.12.19
 idna==3.20
 iniconfig==2.3.1
@@ -17,7 +18,9 @@ markdownify==1.2.3
 markitdown==0.1.9
 numpy==2.5.4
 onnxruntime==1.31.1
+openpyxl==3.1.5
 packaging==26.3
+pandas==3.1.1
 pdfminer.six==20260107
 pdfplumber==0.11.10
 pillow==13.0.0
@@ -32,9 +35,13 @@ PySide6_Essentials==6.12.0
 PySide6_Pdf==6.12.0.140
 PySide6_WebEngine==6.12.0.140
 pytest==9.2.0
+python-dateutil==4.0.0
+python-pptx==1.0.2
 requests==2.34.2
 shiboken6==6.12.0
 six==1.17.0
 soupsieve==4.0.1
 typing_extensions==4.16.0
+tzdata==2026.6
 urllib3==2.8.0
+xlsxwriter==3.3.1

@@ -1,51 +1,116 @@
 # Third-Party Notices
 
-## Purpose and status definitions
+This file records important third-party software used or planned by **Hybrid Document to Markdown**. It supports attribution and release preparation; it is not legal advice and is not a replacement for the complete license texts shipped by each dependency.
 
-This document tracks external software currently used during development and components planned for the project's MarkItDown-based conversion architecture. Listing a planned component **does not mean it has been installed, integrated, packaged, or redistributed**.
+## License boundaries
 
-This inventory is not a substitute for complete license texts, attribution records, or a release-specific audit of direct and transitive dependencies.
+- The repository [MIT License](LICENSE) applies only to original project code and documentation that the project contributors are authorized to license.
+- Microsoft MarkItDown and every other dependency retain their own copyright and license terms.
+- Declaring a package in `requirements.in` or `requirements.txt` does not relicense that package under this project's MIT License.
+- A future Windows executable may bundle Python packages and native libraries. The final distribution must include every notice and license required by the components actually shipped.
 
-**Project source license:** [MIT License](LICENSE). It applies to original content that contributors are authorized to license; third-party components retain their respective licenses.
+## Current primary components
 
-## Core and planned architecture components
+| Component | Version | Role | Upstream license | Current status |
+|---|---:|---|---|---|
+| [Microsoft MarkItDown](https://github.com/microsoft/markitdown) | 0.1.9 | Primary document conversion engine | MIT | Installed and integrated |
+| [PySide6 / Qt for Python](https://doc.qt.io/qtforpython-6/) | 6.12.0 | Windows desktop framework | LGPL-3.0 / GPL-3.0 / commercial options | Installed; GUI in progress |
+| [pytest](https://github.com/pytest-dev/pytest) | 9.2.0 | Development testing | MIT | Development only |
 
-| Component | Intended role | License / distribution considerations | Upstream source | Status |
-|---|---|---|---|---|
-| Microsoft MarkItDown 0.1.9 | Primary document-to-Markdown conversion engine | MIT; retain the applicable license and copyright notices when distributing | [Microsoft MarkItDown](https://github.com/microsoft/markitdown) | Installed and integrated with DOCX/PDF extras |
-| PySide6 / Qt for Python | Desktop GUI | Open-source and commercial licensing options; verify the applicable Qt modules and LGPL/GPL obligations for Windows packaging | [Qt for Python](https://doc.qt.io/qtforpython-6/) | Development dependency; full GUI pending |
-| `markitdown-ocr` | Optional image/OCR enhancement through a compatible Vision model | MIT; review plugin and dependency notices; API access may involve separate provider terms, data processing, and usage fees | [MarkItDown OCR plugin](https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr) | Planned; not yet integrated |
-| Compatible cloud Vision API / client | Optional image understanding and OCR | Provider/model not selected; verify SDK license, data-handling terms, authentication, and fees before use | To be determined | Planned; undecided |
+## Format-specific runtime dependencies
 
-The `markitdown-ocr` plugin is designed around an LLM/Vision client. It should **not** be described as a guaranteed offline OCR engine. The application's ordinary local conversion path is intended to remain usable without online enhancement.
+These packages are installed through the selected MarkItDown extras. Versions reflect the current development lock file.
 
-## Development and migration dependencies
+| Component | Version | Used for | License | Notice requirement |
+|---|---:|---|---|---|
+| [Mammoth](https://github.com/mwilliamson/python-mammoth) | 1.13.0 | DOCX conversion | BSD-2-Clause | Retain copyright, conditions, and disclaimer |
+| [pdfplumber](https://github.com/jsvine/pdfplumber) | 0.11.10 | PDF extraction | MIT | Retain copyright and license notice |
+| [python-pptx](https://github.com/scanny/python-pptx) | 1.0.2 | PPTX conversion | MIT | Retain copyright and license notice |
+| [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | XLSX processing | MIT | Retain copyright and license notice |
+| [pandas](https://pandas.pydata.org/) | 3.1.1 | XLSX/tabular processing | BSD-3-Clause | Retain copyright, conditions, and disclaimer |
+| [XlsxWriter](https://github.com/jmcnamara/XlsxWriter) | 3.3.1 | Workbook support installed through `python-pptx` | BSD-2-Clause | Retain copyright, conditions, and disclaimer |
 
-| Component | Existing development role | License / distribution consideration | Upstream source | Migration decision |
-|---|---|---|---|---|
-| `python-docx` | Previously used for the custom-converter design and local test-fixture creation | MIT; preserve applicable notices if redistributed | [python-docx](https://github.com/python-openxml/python-docx) | Removed from the project's direct dependency list; not required by the production adapter |
-| `pdfplumber` | PDF extraction used by MarkItDown's PDF extra | MIT; audit transitive packages if redistributed | [pdfplumber](https://github.com/jsvine/pdfplumber) | Retained as a transitive MarkItDown dependency |
-| `pytest` | Development and automated tests | MIT; generally a development dependency, not required in the released application | [pytest](https://github.com/pytest-dev/pytest) | Retain for project testing |
+> [!NOTE]
+> This table highlights the primary and format-specific packages. MarkItDown, PySide6, and those packages have additional transitive dependencies. A complete machine-generated dependency and license inventory must be produced from the final release environment during Phase F.
 
-Other libraries may be installed transitively by MarkItDown, the GUI framework, or optional plugins. Their presence and distribution obligations must be audited against the **actual release environment** rather than assumed from this preliminary list.
+## Planned components
 
-## Licensing and attribution notes
+| Component | Planned role | License/status |
+|---|---|---|
+| [`markitdown-ocr`](https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr) | Optional OCR and Vision integration | MIT; not installed or integrated |
+| Compatible cloud Vision API/client | Optional online image understanding | Provider undecided; terms, privacy, and fees must be reviewed before integration |
 
-- **MarkItDown and `markitdown-ocr`:** Both are identified upstream as MIT-licensed. The exact distributed versions and their license/copyright notices must be checked and retained as required.
-- **PySide6 / Qt:** The framework offers open-source LGPL/GPL and commercial licensing options. Obligations depend on the actual modules and deployment approach; requirements may include appropriate notices, license texts, and compliance with users' rights concerning covered libraries. Verify before packaging.
-- **Optional cloud API:** Using a service does not automatically mean its server software is included in the application's distribution. Review the separately applicable API/provider terms, privacy disclosures, and any client SDK shipped with the app.
-- **Original code:** The repository's MIT license is not a relicensing of third-party code.
+Azure Document Intelligence is outside the project scope.
+
+## Microsoft MarkItDown attribution
+
+MarkItDown is licensed separately from this project under the MIT License. Its upstream license identifies Microsoft Corporation as the copyright holder.
+
+<details>
+<summary>Microsoft MarkItDown MIT License</summary>
+
+```text
+MIT License
+
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+</details>
+
+Source: [Microsoft MarkItDown LICENSE](https://github.com/microsoft/markitdown/blob/main/LICENSE)
+
+## PySide6 and Qt distribution note
+
+The development environment currently uses the community PySide6 wheels. Qt for Python documents open-source LGPLv3/GPLv3 and commercial licensing paths.
+
+Before distributing a Windows build:
+
+- Identify the Qt and PySide6 modules actually bundled.
+- Select and document the applicable Qt licensing path.
+- Include the required Qt, PySide6, and third-party license texts.
+- Preserve the rights required by the selected LGPL/GPL terms.
+- Audit Qt WebEngine and Chromium notices if WebEngine is shipped.
+- Do not assume that the repository's MIT License replaces Qt's terms.
+
+Official references:
+
+- [Qt for Python licensing overview](https://doc.qt.io/qtforpython-6/)
+- [Qt licensing](https://doc.qt.io/qt-6/licensing.html)
+- [Qt for Python third-party licenses](https://doc.qt.io/qtforpython-6/licenses.html)
 
 ## Release compliance checklist
 
-1. Record the exact package versions and the final direct/transitive dependency tree.
-2. Confirm which packages and native binaries actually ship inside the Windows executable or installer.
-3. Review the precise licenses and copyright notices of all redistributed items, including MarkItDown, OCR/plugin dependencies, PySide6, and Qt components.
-4. Determine the relevant Qt LGPL/GPL/commercial licensing path and satisfy its obligations for the chosen Windows packaging method.
-5. Include required complete license texts, copyright statements, and notices with the distribution.
-6. Verify selected cloud API/SDK terms and document consent, privacy, credential handling, and potential processing costs.
-7. Recheck this notice document against the actual release build before publishing a GitHub release.
+Before publishing an executable or installer:
+
+1. Rebuild from a clean, pinned release environment.
+2. Record the full direct and transitive dependency tree.
+3. Generate a complete license inventory or software bill of materials.
+4. Confirm which Python packages, Qt modules, native binaries, and plugins are bundled.
+5. Include the MarkItDown MIT notice and all required third-party notices.
+6. Reproduce the applicable MIT and BSD copyright notices and license conditions.
+7. Complete the Qt/PySide6 compliance review for the chosen packaging method.
+8. Audit Qt WebEngine/Chromium separately if included.
+9. Review the selected Vision provider's SDK license, privacy terms, and fees if online enhancement is added.
+10. Recheck this document against the exact release artifact.
 
 ## Independence statement
 
-This is an independent portfolio project. It is not affiliated with, sponsored by, or endorsed by Microsoft, The Qt Company, or other upstream software maintainers.
+This is an independent portfolio project. It is not affiliated with, sponsored by, or endorsed by Microsoft, The Qt Company, or other upstream maintainers.

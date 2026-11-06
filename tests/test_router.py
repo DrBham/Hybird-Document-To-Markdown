@@ -5,6 +5,7 @@ import pytest
 from document_converter.core.base_converter import BaseConverter
 from document_converter.core.models import ConversionResult
 from document_converter.core.router import ConverterRouter
+from document_converter.core.validator import SUPPORTED_FORMATS
 
 
 class FakeConverter(BaseConverter):
@@ -40,6 +41,13 @@ def test_router_selects_txt_converter(tmp_path):
         (".txt", "# TXT Converter"),
         (".docx", "# DOCX Converter"),
         (".pdf", "# PDF Converter"),
+        (".pptx", "# PPTX Converter"),
+        (".xlsx", "# XLSX Converter"),
+        (".csv", "# CSV Converter"),
+        (".html", "# HTML Converter"),
+        (".htm", "# HTM Converter"),
+        (".json", "# JSON Converter"),
+        (".xml", "# XML Converter"),
     ],
 )
 def test_router_selects_correct_converter(
@@ -62,9 +70,19 @@ def test_router_selects_correct_converter(
     test_file.write_text("Test content", encoding="utf-8")
 
     router = ConverterRouter({
-        ".txt": NamedFakeConverter("# TXT Converter"),
-        ".docx": NamedFakeConverter("# DOCX Converter"),
-        ".pdf": NamedFakeConverter("# PDF Converter"),
+        extension: NamedFakeConverter(markdown)
+        for extension, markdown in [
+            (".txt", "# TXT Converter"),
+            (".docx", "# DOCX Converter"),
+            (".pdf", "# PDF Converter"),
+            (".pptx", "# PPTX Converter"),
+            (".xlsx", "# XLSX Converter"),
+            (".csv", "# CSV Converter"),
+            (".html", "# HTML Converter"),
+            (".htm", "# HTM Converter"),
+            (".json", "# JSON Converter"),
+            (".xml", "# XML Converter"),
+        ]
     })
 
     result = router.convert(test_file)
@@ -93,4 +111,4 @@ def test_router_rejects_unregistered_converter(tmp_path):
 def test_router_has_markitdown_defaults():
     router = ConverterRouter()
 
-    assert set(router.converters) == {".txt", ".docx", ".pdf"}
+    assert set(router.converters) == SUPPORTED_FORMATS

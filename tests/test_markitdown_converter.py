@@ -18,7 +18,21 @@ class FakeMarkItDown:
         return SimpleNamespace(markdown=self.markdown)
 
 
-@pytest.mark.parametrize("extension", [".txt", ".docx", ".pdf"])
+@pytest.mark.parametrize(
+    "extension",
+    [
+        ".txt",
+        ".docx",
+        ".pdf",
+        ".pptx",
+        ".xlsx",
+        ".csv",
+        ".html",
+        ".htm",
+        ".json",
+        ".xml",
+    ],
+)
 def test_converter_returns_application_result(tmp_path, extension):
     source = tmp_path / f"sample{extension}"
     source.write_bytes(b"test document")

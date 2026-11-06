@@ -2,7 +2,7 @@ from pathlib import Path
 
 from .base_converter import BaseConverter
 from .models import ConversionResult
-from .validator import validate_file
+from .validator import SUPPORTED_FORMATS, validate_file
 
 
 class ConverterRouter:
@@ -17,9 +17,8 @@ class ConverterRouter:
 
             engine = MarkItDownConverter()
             converters = {
-                ".txt": engine,
-                ".docx": engine,
-                ".pdf": engine,
+                extension: engine
+                for extension in SUPPORTED_FORMATS
             }
 
         self.converters = converters
