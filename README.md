@@ -7,7 +7,7 @@
 ### A local-first Windows desktop converter powered by Python and Microsoft MarkItDown
 
 [![Development Status](https://img.shields.io/badge/status-Checkpoint%20E%20WIP-7C3AED?style=for-the-badge)](#-roadmap)
-[![Tests](https://img.shields.io/badge/tests-70%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
+[![Tests](https://img.shields.io/badge/tests-76%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
 [![Python](https://img.shields.io/badge/python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](#-technology-stack)
 
 [![MarkItDown](https://img.shields.io/badge/MarkItDown-0.1.9-2563EB?style=flat-square)](https://github.com/microsoft/markitdown)
@@ -30,7 +30,7 @@
 ---
 
 > [!IMPORTANT]
-> Phase D is complete: the conversion core and branded PySide6 desktop workflow are implemented and tested. Phase E—consent-based OCR/Vision enhancement—is now the active checkpoint. There is no packaged Windows executable yet.
+> Phase D is complete. Phase E—fully local document intelligence—is now the only active checkpoint. Installer work is intentionally deferred until the image-reading pipeline and model evaluation are complete.
 
 > [!NOTE]
 > This is an independent portfolio project that uses [Microsoft MarkItDown](https://github.com/microsoft/markitdown). It is not an official Microsoft product and is not affiliated with or endorsed by Microsoft.
@@ -108,15 +108,22 @@
 <li>Custom transparent pixel-art application and header logo</li>
 <li>Scrollbars that appear only when content overflows</li>
 <li>Progressive “Save Markdown” action shown after successful conversion</li>
-<li>70 passing automated tests</li>
+<li>Framework-independent schema for OCR, visual elements, and diagram relationships</li>
+<li>Deterministic Markdown renderer for image-analysis results</li>
+<li>Persistent local model registry with size and SHA-256 verification</li>
+<li>Lazy PaddleOCR adapter with no cloud API dependency</li>
+<li>OOXML image extraction and local PDF-page rendering</li>
+<li>Corpus-level exact-match and character-error-rate evaluation</li>
+<li>91 passing automated tests</li>
 </ul>
 </td>
 <td width="50%" valign="top">
 <h3>🚧 WIP &amp; planned</h3>
 <ul>
-<li><strong>WIP:</strong> consent-based OCR and Vision</li>
-<li><strong>WIP:</strong> credential safety and offline fallback</li>
-<li><strong>Planned:</strong> Windows executable and release</li>
+<li><strong>WIP:</strong> embedded-image and scanned-page extraction</li>
+<li><strong>WIP:</strong> OCR baseline evaluation on representative local datasets</li>
+<li><strong>WIP:</strong> diagram and informative-image understanding</li>
+<li><strong>Deferred:</strong> Windows bootstrap installer and selectable model packs</li>
 </ul>
 </td>
 </tr>
@@ -138,7 +145,7 @@ Representative integration coverage exists for every MVP format.
 | Structured text | `.json`, `.xml` | MarkItDown core | ✅ Passed |
 
 > [!WARNING]
-> “Supported” does not mean perfect visual fidelity. Scanned PDFs, embedded images, complex layouts, nested tables, diagrams, encrypted documents, and damaged files may produce incomplete results or require manual review.
+> “Supported” does not mean perfect visual fidelity. Standard conversion handles document text today. Scanned pages, embedded images, and diagrams remain Phase E work and may still require manual review.
 
 Emails, archives, audio, EPUB, LOG files, and standalone image conversion are outside the committed MVP scope.
 
@@ -156,10 +163,10 @@ flowchart LR
     G --> H[One .md file per input]
 
     UI[PySide6 GUI] -. controls .-> A
-    V[OCR / Vision — WIP] -. optional enhancement .-> E
+    V[Local document intelligence — WIP] -. optional enhancement .-> E
 ```
 
-The conversion path is local by default. MarkItDown receives a local path through `convert_local()`. The application then converts the library response into its own `ConversionResult` model.
+The conversion path is fully local. MarkItDown receives a local path through `convert_local()`. The application then converts the library response into its own `ConversionResult` model. Phase E follows the same boundary: local model files enter a replaceable backend and return application-owned result objects.
 
 ## 🚀 Quick Start
 
@@ -206,6 +213,19 @@ python -m document_converter
 ```
 
 The file-type selector starts at TXT. Choose another format when needed, then browse or drag matching documents, convert them, review a result, and choose an output folder. “Save Markdown” appears after at least one conversion succeeds. Conversion runs in a worker thread, so the window remains responsive.
+
+### 👁️ Prepare the Optional Local Intelligence Runtime
+
+The base converter does not install machine-learning packages. Developers who work on Phase E can create a separate environment layer:
+
+```powershell
+python -m pip install -r requirements-intelligence.in
+```
+
+This optional layer uses PaddleOCR as the first pretrained OCR baseline. Model weights are not bundled yet. The GUI keeps **Analyze document images locally** disabled until a versioned model pack passes its integrity check and the document-image pipeline is connected.
+
+> [!IMPORTANT]
+> No API key or hosted provider is used. Installing the optional Python packages alone does not complete Phase E; tested local weights, document-image extraction, and quality benchmarks are still required.
 
 ### 🧑‍💻 Use the Core API
 
@@ -304,6 +324,12 @@ python .\your_script.py
 | Routing | Select the converter by extension | `ConverterRouter` |
 | Conversion adapter | Isolate the third-party engine | `MarkItDownConverter` |
 | Services | Coordinate batches and export | `BatchConverter`, `MarkdownExporter` |
+| Local intelligence schema | Keep OCR and diagram output independent of ML frameworks | `DocumentIntelligenceResult`, `TextRegion`, `VisualElement`, `VisualRelationship` |
+| Local model integrity | Locate persistent model packs and reject incomplete or modified artifacts | `LocalModelManager` |
+| OCR backend | Adapt local PaddleOCR results without importing it in the base app | `PaddleOCRBackend` |
+| Image extraction | Extract OOXML media and render PDF pages locally | `DocumentImageExtractor` |
+| Intelligence rendering | Produce reviewable Markdown from structured image results | `LocalDocumentIntelligence`, `render_intelligence_markdown()` |
+| Evaluation | Compare model versions with stable corpus-level OCR metrics | `evaluate_ocr_samples()`, `scripts/evaluate_ocr.py` |
 | GUI | Desktop interaction | PySide6 window, worker thread, preview, and export workflow |
 
 ### Why an adapter?
@@ -336,6 +362,17 @@ This design provides:
 │       │   ├── app.py
 │       │   ├── main_window.py
 │       │   └── theme.py
+│       ├── intelligence/
+│       │   ├── backend.py
+│       │   ├── converter.py
+│       │   ├── evaluation.py
+│       │   ├── extractor.py
+│       │   ├── model_manager.py
+│       │   ├── models.py
+│       │   ├── paddle_ocr.py
+│       │   ├── pipeline.py
+│       │   ├── renderer.py
+│       │   └── service.py
 │       └── services/
 │           ├── batch_converter.py
 │           └── markdown_exporter.py
@@ -350,8 +387,13 @@ This design provides:
 │       ├── PressStart2P-OFL.txt
 │       └── PressStart2P-FONTLOG.txt
 ├── tests/
+├── datasets/
+│   └── README.md
+├── scripts/
+│   └── evaluate_ocr.py
 ├── pytest.ini
 ├── requirements.in
+├── requirements-intelligence.in
 ├── requirements.txt
 ├── THIRD_PARTY_NOTICES.md
 └── README.md
@@ -380,6 +422,7 @@ The test suite focuses on application behavior and third-party integration bound
 <li>Partial failures and result preservation</li>
 <li>Unicode export and overwrite protection</li>
 <li>GUI selection, state, threaded conversion, and export workflow</li>
+<li>Local intelligence result validation, Markdown rendering, model integrity, and OCR adapter boundaries</li>
 </ul>
 </td>
 </tr>
@@ -401,18 +444,19 @@ python -m pytest -q
 <td width="50%" valign="top">
 <h3>🔒 Local-first privacy</h3>
 <ul>
-<li>Local conversion needs no API key.</li>
-<li>Ordinary local conversion requires no upload.</li>
-<li>Internet loss must not block local processing.</li>
-<li>Online enhancement will require explicit consent.</li>
-<li>Secrets must never enter code, logs, Git, or output.</li>
+<li>Conversion and planned image analysis need no API key.</li>
+<li>Documents are not uploaded by the application.</li>
+<li>Installed model packs remain available without internet access.</li>
+<li>Model artifacts are verified before use.</li>
+<li>The base converter remains usable without the optional ML runtime.</li>
 </ul>
 </td>
 <td width="50%" valign="top">
 <h3>⚠️ Current limitations</h3>
 <ul>
 <li>A packaged <code>.exe</code> is not available yet.</li>
-<li>Scanned PDFs require future OCR support.</li>
+<li>Scanned-page and embedded-image analysis is not connected end to end yet.</li>
+<li>The first public, trained model pack is not published yet.</li>
 <li>Complex layouts may lose fidelity.</li>
 <li>Encrypted or damaged files may fail.</li>
 <li>The 100 MiB limit is not yet configurable in the GUI.</li>
@@ -422,7 +466,7 @@ python -m pytest -q
 </table>
 
 > [!IMPORTANT]
-> No Vision provider has been selected. Azure Document Intelligence is outside this project's scope.
+> Phase E is designed for local inference. Dataset licenses, model licenses, weight size, accuracy, and hardware performance will be reviewed before any trained model is published.
 
 ## 🧰 Technology Stack
 
@@ -431,6 +475,8 @@ python -m pytest -q
 | Language | Python 3.13 | Application and tests |
 | Desktop GUI | PySide6 6.12 | Implemented Phase D workflow |
 | Conversion | Microsoft MarkItDown 0.1.9 | Production conversion engine |
+| Local OCR baseline | PaddleOCR 3.7.0 + PaddlePaddle 3.3.1 | Optional Phase E runtime; not part of the base install |
+| Intelligence layer | Project-owned Python interfaces and result models | OCR, visual elements, relationships, model integrity, and Markdown rendering |
 | DOCX | Mammoth through `markitdown[docx]` | Word conversion |
 | PDF | pdfminer.six and pdfplumber through `markitdown[pdf]` | Text-based PDF conversion |
 | PowerPoint | python-pptx through `markitdown[pptx]` | PPTX conversion |
@@ -449,8 +495,8 @@ Direct dependencies are declared in `requirements.in`. The reproducible developm
 | B — Engine | MarkItDown integration and initial TXT/DOCX/PDF verification | ✅ Completed |
 | C — Conversion core | All MVP formats, validation, same-extension batches, per-file outcomes, and export | ✅ Completed |
 | D — Desktop GUI | Format selection, drag and drop, threaded conversion, status list, preview, Save Markdown workflow, theme, and branding | ✅ Completed |
-| E — Enhancement | Consent-based OCR/Vision, credential safety, and offline fallback | 🚧 In progress |
-| F — Release | Regression testing, Windows packaging, license audit, documentation, and GitHub release | 🗓️ Planned |
+| E — Local document intelligence | OCR, embedded-image extraction, diagram understanding, training/evaluation, and publishable model packs | 🚧 In progress |
+| F — Release | Regression testing, bootstrap installer, selectable feature packs, license audit, and GitHub release | ⏸️ Deferred until E is complete |
 
 ### Current checkpoint: E — Enhancement
 
@@ -465,17 +511,31 @@ Phase D delivered:
 - Low-glare dark-medieval pixel theme and custom application branding
 - 70 passing automated tests
 
-Checkpoint E will design and implement optional enhancement without weakening local-first behavior:
+Checkpoint E now has a local, testable foundation:
 
-- Explicit consent before any online processing
-- OCR/Vision acceptance criteria, boundaries, and provider decision
-- Provider-independent interfaces before selecting an external service
-- Credential storage, validation, and log redaction
-- Clear offline fallback to local conversion
-- Automated tests and privacy documentation for every enhancement path
+- Framework-independent OCR and diagram result schema
+- Deterministic image-analysis Markdown renderer
+- Persistent model directory with version, size, and SHA-256 validation
+- Lazy PaddleOCR adapter using local detection and recognition directories
+- Local extraction of embedded OOXML images and rendered PDF pages
+- Best-effort composition of image analysis with existing Markdown conversion
+- Reproducible exact-match and character-error-rate evaluation utilities
+- Optional dependency layer that does not enlarge the base converter
+- GUI status that clearly distinguishes missing, damaged, ready, and not-yet-connected model states
+- No API keys, cloud uploads, or hosted Vision client
+- 91 passing automated tests
+
+Remaining Phase E work:
+
+- Extract images and rendered scanned pages from PDF, DOCX, PPTX, and XLSX
+- Assemble the first integrity-checked OCR model pack
+- Run real OCR benchmarks against representative documents and diagrams
+- Add visual-element detection and relationship reconstruction
+- Establish dataset provenance, licenses, training scripts, metrics, and reproducible checkpoints
+- Publish a tested model pack that users can run without training it themselves
 
 > [!IMPORTANT]
-> Phase E starts with requirements and security boundaries. No document will be uploaded and no provider SDK will be added until consent behavior, credential handling, privacy terms, costs, and offline fallback are documented and reviewed.
+> Phase E is not complete yet. The architecture is ready, but the GUI intentionally keeps local analysis unavailable until both the model pack and end-to-end document-image pipeline are verified.
 
 Development follows this milestone cycle:
 

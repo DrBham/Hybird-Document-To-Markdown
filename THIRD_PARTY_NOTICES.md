@@ -15,6 +15,8 @@ This file records important third-party software used or planned by **Hybrid Doc
 |---|---:|---|---|---|
 | [Microsoft MarkItDown](https://github.com/microsoft/markitdown) | 0.1.9 | Primary document conversion engine | MIT | Installed and integrated |
 | [PySide6 / Qt for Python](https://doc.qt.io/qtforpython-6/) | 6.12.0 | Windows desktop framework | LGPL-3.0 / GPL-3.0 / commercial options | Installed and integrated |
+| [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) | 3.7.0 | Optional local OCR baseline | Apache-2.0 | Declared in the separate Phase E dependency layer |
+| [PaddlePaddle](https://github.com/PaddlePaddle/Paddle) | 3.3.1 | Optional local inference runtime | Apache-2.0 | Declared in the separate Phase E dependency layer |
 | [Press Start 2P](https://github.com/google/fonts/tree/main/ofl/pressstart2p) | 3.000 | Pixel heading font | SIL Open Font License 1.1 | Bundled with OFL and FONTLOG |
 | [pytest](https://github.com/pytest-dev/pytest) | 9.2.0 | Development testing | MIT | Development only |
 
@@ -34,14 +36,13 @@ These packages are installed through the selected MarkItDown extras. Versions re
 > [!NOTE]
 > This table highlights the primary and format-specific packages. MarkItDown, PySide6, and those packages have additional transitive dependencies. A complete machine-generated dependency and license inventory must be produced from the final release environment during Phase F.
 
-## Planned components
+## Local model and dataset boundary
 
-| Component | Planned role | License/status |
-|---|---|---|
-| [`markitdown-ocr`](https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr) | Optional OCR and Vision integration | MIT; not installed or integrated |
-| Compatible cloud Vision API/client | Optional online image understanding | Provider undecided; terms, privacy, and fees must be reviewed before integration |
+The Phase E interfaces are project code, but pretrained weights, fine-tuned checkpoints, and training datasets remain subject to their own licenses and terms. Declaring PaddleOCR and PaddlePaddle does not grant permission to redistribute every compatible model or dataset.
 
-Azure Document Intelligence is outside the project scope.
+Before a model pack is published, the project must record its upstream model, dataset provenance, training changes, license, checksum, version, evaluation results, and required notices. Only artifacts whose licenses permit the intended redistribution may be included.
+
+The current Phase E path is designed for local inference and does not require a hosted Vision provider or API key.
 
 ## Microsoft MarkItDown attribution
 
@@ -109,8 +110,9 @@ Before publishing an executable or installer:
 6. Reproduce the applicable MIT and BSD copyright notices and license conditions.
 7. Complete the Qt/PySide6 compliance review for the chosen packaging method.
 8. Audit Qt WebEngine/Chromium separately if included.
-9. Review the selected Vision provider's SDK license, privacy terms, and fees if online enhancement is added.
-10. Recheck this document against the exact release artifact.
+9. Review the licenses and redistribution terms for every OCR/vision model and training dataset.
+10. Record model versions, checksums, provenance, and evaluation metadata.
+11. Recheck this document against the exact release artifact and each selectable model pack.
 
 ## Independence statement
 
