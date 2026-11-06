@@ -6,8 +6,8 @@
 
 ### A local-first Windows desktop converter powered by Python and Microsoft MarkItDown
 
-[![Development Status](https://img.shields.io/badge/status-Checkpoint%20E%20WIP-7C3AED?style=for-the-badge)](#-roadmap)
-[![Tests](https://img.shields.io/badge/tests-76%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
+[![Development Status](https://img.shields.io/badge/status-E2%20OCR%20Baseline%20WIP-7C3AED?style=for-the-badge)](#-roadmap)
+[![Tests](https://img.shields.io/badge/tests-91%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
 [![Python](https://img.shields.io/badge/python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](#-technology-stack)
 
 [![MarkItDown](https://img.shields.io/badge/MarkItDown-0.1.9-2563EB?style=flat-square)](https://github.com/microsoft/markitdown)
@@ -30,7 +30,7 @@
 ---
 
 > [!IMPORTANT]
-> Phase D is complete. Phase E—fully local document intelligence—is now the only active checkpoint. Installer work is intentionally deferred until the image-reading pipeline and model evaluation are complete.
+> Phase D is complete. Phase E—fully local document intelligence—is active, with E2 (OCR baseline and model pack) as the current checkpoint. Installer work is intentionally deferred until Phase E is complete.
 
 > [!NOTE]
 > This is an independent portfolio project that uses [Microsoft MarkItDown](https://github.com/microsoft/markitdown). It is not an official Microsoft product and is not affiliated with or endorsed by Microsoft.
@@ -120,9 +120,11 @@
 <td width="50%" valign="top">
 <h3>🚧 WIP &amp; planned</h3>
 <ul>
-<li><strong>WIP:</strong> embedded-image and scanned-page extraction</li>
-<li><strong>WIP:</strong> OCR baseline evaluation on representative local datasets</li>
-<li><strong>WIP:</strong> diagram and informative-image understanding</li>
+<li><strong>Active — E2:</strong> assemble and verify the first local OCR model pack</li>
+<li><strong>Active — E2:</strong> benchmark real scans, screenshots, and diagram labels</li>
+<li><strong>Planned — E3:</strong> dataset provenance and reproducible fine-tuning</li>
+<li><strong>Planned — E4:</strong> diagram and informative-image understanding</li>
+<li><strong>Planned — E5:</strong> end-to-end GUI acceptance and public model pack</li>
 <li><strong>Deferred:</strong> Windows bootstrap installer and selectable model packs</li>
 </ul>
 </td>
@@ -158,12 +160,16 @@ flowchart LR
     C -- No --> X[Reject batch]
     C -- Yes --> D[Converter router]
     D --> E[Microsoft MarkItDown]
-    E --> F[Per-file outcomes]
+    D -. optional Phase E .-> I[Local image extraction]
+    I --> O[Local OCR and visual analysis]
+    O --> R[Structured result and Markdown renderer]
+    E --> M[Merge document and image Markdown]
+    R --> M
+    M --> F[Per-file outcomes]
     F --> G[Markdown export]
     G --> H[One .md file per input]
 
     UI[PySide6 GUI] -. controls .-> A
-    V[Local document intelligence — WIP] -. optional enhancement .-> E
 ```
 
 The conversion path is fully local. MarkItDown receives a local path through `convert_local()`. The application then converts the library response into its own `ConversionResult` model. Phase E follows the same boundary: local model files enter a replaceable backend and return application-owned result objects.
@@ -222,7 +228,7 @@ The base converter does not install machine-learning packages. Developers who wo
 python -m pip install -r requirements-intelligence.in
 ```
 
-This optional layer uses PaddleOCR as the first pretrained OCR baseline. Model weights are not bundled yet. The GUI keeps **Analyze document images locally** disabled until a versioned model pack passes its integrity check and the document-image pipeline is connected.
+This optional layer uses PaddleOCR as the first pretrained OCR baseline. Model weights are not bundled yet. The GUI keeps **Analyze document images locally** disabled until a versioned model pack passes its integrity check.
 
 > [!IMPORTANT]
 > No API key or hosted provider is used. Installing the optional Python packages alone does not complete Phase E; tested local weights, document-image extraction, and quality benchmarks are still required.
@@ -455,7 +461,7 @@ python -m pytest -q
 <h3>⚠️ Current limitations</h3>
 <ul>
 <li>A packaged <code>.exe</code> is not available yet.</li>
-<li>Scanned-page and embedded-image analysis is not connected end to end yet.</li>
+<li>End-to-end analysis has not passed acceptance testing with a real model pack yet.</li>
 <li>The first public, trained model pack is not published yet.</li>
 <li>Complex layouts may lose fidelity.</li>
 <li>Encrypted or damaged files may fail.</li>
@@ -485,7 +491,7 @@ python -m pytest -q
 | Version control | Git and GitHub | History and collaboration |
 | Target OS | Windows | Development and release target |
 
-Direct dependencies are declared in `requirements.in`. The reproducible development snapshot is pinned in `requirements.txt`.
+Base dependencies are declared in `requirements.in`, while the optional Phase E runtime is isolated in `requirements-intelligence.in`. The reproducible base development snapshot is pinned in `requirements.txt`.
 
 ## 🗺️ Roadmap
 
@@ -498,7 +504,7 @@ Direct dependencies are declared in `requirements.in`. The reproducible developm
 | E — Local document intelligence | OCR, embedded-image extraction, diagram understanding, training/evaluation, and publishable model packs | 🚧 In progress |
 | F — Release | Regression testing, bootstrap installer, selectable feature packs, license audit, and GitHub release | ⏸️ Deferred until E is complete |
 
-### Current checkpoint: E — Enhancement
+### Current checkpoint: E2 — OCR Baseline & Model Pack
 
 Phase D delivered:
 
@@ -509,7 +515,7 @@ Phase D delivered:
 - Output-directory selection and overwrite handling
 - Progressive Save Markdown action with collision-safe one-file-per-input output
 - Low-glare dark-medieval pixel theme and custom application branding
-- 70 passing automated tests
+- Phase D baseline: 70 passing automated tests
 
 Checkpoint E now has a local, testable foundation:
 
@@ -525,17 +531,45 @@ Checkpoint E now has a local, testable foundation:
 - No API keys, cloud uploads, or hosted Vision client
 - 91 passing automated tests
 
-Remaining Phase E work:
+### Phase E execution plan
 
-- Extract images and rendered scanned pages from PDF, DOCX, PPTX, and XLSX
-- Assemble the first integrity-checked OCR model pack
-- Run real OCR benchmarks against representative documents and diagrams
-- Add visual-element detection and relationship reconstruction
-- Establish dataset provenance, licenses, training scripts, metrics, and reproducible checkpoints
-- Publish a tested model pack that users can run without training it themselves
+| Checkpoint | Scope | Exit criteria | Status |
+|---|---|---|:---:|
+| E0 — Architecture | Remove the cloud path; define local result, backend, renderer, and model interfaces | No API key or hosted runtime remains; unit tests pass | ✅ Completed |
+| E1 — Extraction pipeline | Extract OOXML media, render PDF pages, merge analysis with document Markdown | DOCX/PPTX/XLSX extraction and real PDF rendering are tested | ✅ Completed |
+| E2 — OCR baseline & model pack | Install the optional runtime, assemble local detection/recognition weights, and run representative OCR tests | A verified model pack loads offline and produces measured results through the application pipeline | 🚧 Active |
+| E3 — Dataset & training | Register licensed datasets, create stable splits, add preprocessing and fine-tuning scripts | Training is reproducible; every dataset and checkpoint has provenance and license metadata | ⏳ Planned |
+| E4 — Visual understanding | Detect diagram elements, labels, arrows, and relationships beyond plain OCR | Representative topology, flowchart, chart, and informative-image fixtures produce structured relationships | ⏳ Planned |
+| E5 — Product integration | Refine GUI progress/errors, run quality and performance acceptance, publish the first ready-to-use model pack | A new user can enable local analysis and use it without training a model | ⏳ Planned |
+
+#### What we work on next
+
+E2 is the immediate development stage:
+
+1. Install PaddleOCR and PaddlePaddle from `requirements-intelligence.in` in the development environment.
+2. Select a redistribution-compatible pretrained OCR baseline.
+3. Build the first `hybrid-document-intelligence` model directory and SHA-256 manifest.
+4. Test real scans, screenshots, tables, and diagram labels in Indonesian and English.
+5. Record speed, memory use, exact-match rate, and character error rate.
+6. Connect the verified pack to the GUI and repeat regression testing.
+
+E2 is complete only when the model works through the actual application pipeline without internet access. Installing a Python package by itself does not complete this checkpoint.
+
+### Phase E definition of done
+
+Phase E can be marked complete when:
+
+- document text and informative images are processed locally;
+- the public model pack can be reused without user-side training;
+- dataset and model licenses permit the intended distribution;
+- OCR and diagram quality are measured against a stable test set;
+- corrupted or incomplete model files are rejected safely;
+- the GUI provides useful progress, errors, and fallback behavior;
+- performance and storage targets are documented on representative Windows hardware;
+- all regression and Phase E acceptance tests pass.
 
 > [!IMPORTANT]
-> Phase E is not complete yet. The architecture is ready, but the GUI intentionally keeps local analysis unavailable until both the model pack and end-to-end document-image pipeline are verified.
+> Phase E is not complete yet. E0 and E1 are complete; E2 is active. The GUI intentionally keeps local analysis unavailable until the first model pack passes integrity and end-to-end acceptance tests.
 
 Development follows this milestone cycle:
 
