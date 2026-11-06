@@ -1,11 +1,13 @@
 <div align="center">
 
+<img src="assets/branding/app-logo.png" alt="Hybrid Document to Markdown logo" width="128">
+
 # 📄 Hybrid Document to Markdown
 
 ### A local-first Windows desktop converter powered by Python and Microsoft MarkItDown
 
-[![Development Status](https://img.shields.io/badge/status-Checkpoint%20D%20WIP-7C3AED?style=for-the-badge)](#-roadmap)
-[![Tests](https://img.shields.io/badge/tests-61%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
+[![Development Status](https://img.shields.io/badge/status-Checkpoint%20E%20WIP-7C3AED?style=for-the-badge)](#-roadmap)
+[![Tests](https://img.shields.io/badge/tests-70%20passed-16A34A?style=for-the-badge&logo=pytest&logoColor=white)](#-testing)
 [![Python](https://img.shields.io/badge/python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](#-technology-stack)
 
 [![MarkItDown](https://img.shields.io/badge/MarkItDown-0.1.9-2563EB?style=flat-square)](https://github.com/microsoft/markitdown)
@@ -14,7 +16,7 @@
 [![License](https://img.shields.io/badge/license-MIT-F59E0B?style=flat-square)](LICENSE)
 
 **Convert common documents into readable Markdown without rebuilding format-specific parsers from scratch.**<br>
-**The project combines a tested conversion core with a beginner-friendly Windows desktop workflow now under development.**
+**The project combines a tested conversion core with a beginner-friendly Windows desktop workflow.**
 
 [Overview](#-overview) •
 [Features](#-feature-status) •
@@ -28,7 +30,7 @@
 ---
 
 > [!IMPORTANT]
-> The conversion, validation, batch-processing, and Markdown-export layers are implemented and tested. The PySide6 desktop interface is the active checkpoint. There is no packaged Windows executable yet.
+> The conversion core and PySide6 desktop workflow are implemented and tested. Consent-based OCR/Vision is the active checkpoint. There is no packaged Windows executable yet.
 
 > [!NOTE]
 > This is an independent portfolio project that uses [Microsoft MarkItDown](https://github.com/microsoft/markitdown). It is not an official Microsoft product and is not affiliated with or endorsed by Microsoft.
@@ -42,6 +44,7 @@
 - [Quick Start](#-quick-start)
   - [Requirements](#-requirements)
   - [Installation](#-installation)
+  - [Run the Desktop App](#-run-the-desktop-app)
   - [Run the Tests](#-run-the-tests)
   - [Use the Core API](#-use-the-core-api)
 - [Batch Rules and Validation](#-batch-rules-and-validation)
@@ -98,16 +101,21 @@
 <li>Independent per-file outcomes</li>
 <li>Existence, type, extension, size, and readability validation</li>
 <li>UTF-8 Markdown export with overwrite protection</li>
-<li>61 passing automated tests</li>
+<li>Accessible file picker and drag and drop</li>
+<li>Threaded conversion with per-file status</li>
+<li>Markdown preview, copy, and collision-safe export</li>
+<li>Low-glare dark-medieval pixel theme with a TXT-first file selector</li>
+<li>Custom transparent pixel-art application and header logo</li>
+<li>Scrollbars that appear only when content overflows</li>
+<li>Progressive “Save Markdown” action shown after successful conversion</li>
+<li>70 passing automated tests</li>
 </ul>
 </td>
 <td width="50%" valign="top">
 <h3>🚧 WIP &amp; planned</h3>
 <ul>
-<li><strong>WIP:</strong> file picker and drag and drop</li>
-<li><strong>WIP:</strong> file/status list and Markdown preview</li>
-<li><strong>WIP:</strong> output selection and save workflow</li>
-<li><strong>Planned:</strong> consent-based OCR and Vision</li>
+<li><strong>WIP:</strong> consent-based OCR and Vision</li>
+<li><strong>WIP:</strong> credential safety and offline fallback</li>
 <li><strong>Planned:</strong> Windows executable and release</li>
 </ul>
 </td>
@@ -147,8 +155,8 @@ flowchart LR
     F --> G[Markdown export]
     G --> H[One .md file per input]
 
-    UI[PySide6 GUI — WIP] -. controls .-> A
-    V[OCR / Vision — planned] -. optional enhancement .-> E
+    UI[PySide6 GUI] -. controls .-> A
+    V[OCR / Vision — WIP] -. optional enhancement .-> E
 ```
 
 The conversion path is local by default. MarkItDown receives a local path through `convert_local()`. The application then converts the library response into its own `ConversionResult` model.
@@ -168,7 +176,7 @@ The conversion path is local by default. MarkItDown receives a local path throug
 <p>No API key is required for local conversion.</p>
 <h3 id="run-the-tests">🧪 Test</h3>
 <pre><code>python -m pytest -q</code></pre>
-<p>Expected: <code>61 passed</code></p>
+<p>Expected: <code>70 passed</code></p>
 </td>
 <td width="62%" valign="top">
 <h3 id="installation">📦 Installation</h3>
@@ -188,10 +196,21 @@ python -m pip check</code></pre>
 > [!NOTE]
 > The root-level `pytest.ini` adds `src` to pytest's import path. It is configuration, not a generated cache file.
 
+### 🖥️ Run the Desktop App
+
+From the repository root with the virtual environment active:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m document_converter
+```
+
+The file-type selector starts at TXT. Choose another format when needed, then browse or drag matching documents, convert them, review a result, and choose an output folder. “Save Markdown” appears after at least one conversion succeeds. Conversion runs in a worker thread, so the window remains responsive.
+
 ### 🧑‍💻 Use the Core API
 
 > [!NOTE]
-> The end-user GUI is still under development. The examples below demonstrate the tested Python core directly.
+> The desktop app is the recommended interactive workflow. The examples below show how to reuse the tested Python core directly.
 
 Convert one file:
 
@@ -285,7 +304,7 @@ python .\your_script.py
 | Routing | Select the converter by extension | `ConverterRouter` |
 | Conversion adapter | Isolate the third-party engine | `MarkItDownConverter` |
 | Services | Coordinate batches and export | `BatchConverter`, `MarkdownExporter` |
-| GUI | Desktop interaction | PySide6 modules — WIP |
+| GUI | Desktop interaction | PySide6 window, worker thread, preview, and export workflow |
 
 ### Why an adapter?
 
@@ -296,7 +315,7 @@ This design provides:
 - Easier unit testing with fake engines
 - Clear ownership boundaries
 - Lower migration cost if the engine API changes
-- Reusable core logic for the future GUI
+- Reusable core logic for the desktop GUI and future integrations
 
 ## 🗂️ Project Structure
 
@@ -304,6 +323,7 @@ This design provides:
 .
 ├── src/
 │   └── document_converter/
+│       ├── __main__.py
 │       ├── converters/
 │       │   ├── markitdown_converter.py
 │       │   └── txt_converter.py
@@ -313,10 +333,22 @@ This design provides:
 │       │   ├── router.py
 │       │   └── validator.py
 │       ├── gui/
-│       │   └── __init__.py
+│       │   ├── app.py
+│       │   ├── main_window.py
+│       │   └── theme.py
 │       └── services/
 │           ├── batch_converter.py
 │           └── markdown_exporter.py
+├── design-system/
+│   └── hybrid-document-to-markdown/
+│       └── MASTER.md
+├── assets/
+│   ├── branding/
+│   │   └── app-logo.png
+│   └── fonts/
+│       ├── PressStart2P-Regular.ttf
+│       ├── PressStart2P-OFL.txt
+│       └── PressStart2P-FONTLOG.txt
 ├── tests/
 ├── pytest.ini
 ├── requirements.in
@@ -347,6 +379,7 @@ The test suite focuses on application behavior and third-party integration bound
 <li>Case-insensitive and mixed-extension batches</li>
 <li>Partial failures and result preservation</li>
 <li>Unicode export and overwrite protection</li>
+<li>GUI selection, state, threaded conversion, and export workflow</li>
 </ul>
 </td>
 </tr>
@@ -378,7 +411,7 @@ python -m pytest -q
 <td width="50%" valign="top">
 <h3>⚠️ Current limitations</h3>
 <ul>
-<li>The GUI and packaged <code>.exe</code> are unfinished.</li>
+<li>A packaged <code>.exe</code> is not available yet.</li>
 <li>Scanned PDFs require future OCR support.</li>
 <li>Complex layouts may lose fidelity.</li>
 <li>Encrypted or damaged files may fail.</li>
@@ -396,7 +429,7 @@ python -m pytest -q
 | Area | Technology | Current role |
 |---|---|---|
 | Language | Python 3.13 | Application and tests |
-| Desktop GUI | PySide6 6.12 | Active Checkpoint D work |
+| Desktop GUI | PySide6 6.12 | Implemented Phase D workflow |
 | Conversion | Microsoft MarkItDown 0.1.9 | Production conversion engine |
 | DOCX | Mammoth through `markitdown[docx]` | Word conversion |
 | PDF | pdfminer.six and pdfplumber through `markitdown[pdf]` | Text-based PDF conversion |
@@ -415,21 +448,27 @@ Direct dependencies are declared in `requirements.in`. The reproducible developm
 | Foundation (00–A) | Repository, environment, architecture, TXT learning milestone, and scope/documentation migration | ✅ Completed |
 | B — Engine | MarkItDown integration and initial TXT/DOCX/PDF verification | ✅ Completed |
 | C — Conversion core | All MVP formats, validation, same-extension batches, per-file outcomes, and export | ✅ Completed |
-| D — Desktop GUI | File selection, drag and drop, status list, preview, output location, and save workflow | 🚧 In progress |
-| E — Enhancement | Consent-based OCR/Vision, credential safety, and offline fallback | 🗓️ Planned |
+| D — Desktop GUI | File selection, drag and drop, status list, preview, output location, and save workflow | ✅ Completed |
+| E — Enhancement | Consent-based OCR/Vision, credential safety, and offline fallback | 🚧 In progress |
 | F — Release | Regression testing, Windows packaging, license audit, documentation, and GitHub release | 🗓️ Planned |
 
-### Current checkpoint: D — Desktop GUI
+### Current checkpoint: E — Enhancement
 
-Checkpoint D will connect the tested core to a Windows interface:
+Phase D delivered:
 
-- File picker
-- Drag and drop
-- Selected-file list
-- Per-file conversion status
-- Markdown preview
-- Output-directory selection
-- Save and overwrite workflow
+- Accessible file picker and drag-and-drop alternatives
+- Same-extension selected-file list
+- Responsive threaded conversion with per-file status
+- Markdown preview and copy action
+- Output-directory selection and overwrite handling
+- Collision-safe one-file-per-input export
+
+Checkpoint E will add optional enhancement without weakening local-first behavior:
+
+- Explicit consent before any online processing
+- OCR/Vision boundaries and provider decision
+- Credential storage and log redaction
+- Clear offline fallback to local conversion
 
 Development follows this milestone cycle:
 
