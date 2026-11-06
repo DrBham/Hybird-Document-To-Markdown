@@ -30,7 +30,7 @@
 ---
 
 > [!IMPORTANT]
-> The conversion core and PySide6 desktop workflow are implemented and tested. Consent-based OCR/Vision is the active checkpoint. There is no packaged Windows executable yet.
+> Phase D is complete: the conversion core and branded PySide6 desktop workflow are implemented and tested. Phase E—consent-based OCR/Vision enhancement—is now the active checkpoint. There is no packaged Windows executable yet.
 
 > [!NOTE]
 > This is an independent portfolio project that uses [Microsoft MarkItDown](https://github.com/microsoft/markitdown). It is not an official Microsoft product and is not affiliated with or endorsed by Microsoft.
@@ -448,7 +448,7 @@ Direct dependencies are declared in `requirements.in`. The reproducible developm
 | Foundation (00–A) | Repository, environment, architecture, TXT learning milestone, and scope/documentation migration | ✅ Completed |
 | B — Engine | MarkItDown integration and initial TXT/DOCX/PDF verification | ✅ Completed |
 | C — Conversion core | All MVP formats, validation, same-extension batches, per-file outcomes, and export | ✅ Completed |
-| D — Desktop GUI | File selection, drag and drop, status list, preview, output location, and save workflow | ✅ Completed |
+| D — Desktop GUI | Format selection, drag and drop, threaded conversion, status list, preview, Save Markdown workflow, theme, and branding | ✅ Completed |
 | E — Enhancement | Consent-based OCR/Vision, credential safety, and offline fallback | 🚧 In progress |
 | F — Release | Regression testing, Windows packaging, license audit, documentation, and GitHub release | 🗓️ Planned |
 
@@ -456,19 +456,26 @@ Direct dependencies are declared in `requirements.in`. The reproducible developm
 
 Phase D delivered:
 
-- Accessible file picker and drag-and-drop alternatives
+- TXT-first file-type selector with accessible browse and drag-and-drop alternatives
 - Same-extension selected-file list
 - Responsive threaded conversion with per-file status
-- Markdown preview and copy action
+- Markdown preview, copy action, and adaptive scrollbars
 - Output-directory selection and overwrite handling
-- Collision-safe one-file-per-input export
+- Progressive Save Markdown action with collision-safe one-file-per-input output
+- Low-glare dark-medieval pixel theme and custom application branding
+- 70 passing automated tests
 
-Checkpoint E will add optional enhancement without weakening local-first behavior:
+Checkpoint E will design and implement optional enhancement without weakening local-first behavior:
 
 - Explicit consent before any online processing
-- OCR/Vision boundaries and provider decision
-- Credential storage and log redaction
+- OCR/Vision acceptance criteria, boundaries, and provider decision
+- Provider-independent interfaces before selecting an external service
+- Credential storage, validation, and log redaction
 - Clear offline fallback to local conversion
+- Automated tests and privacy documentation for every enhancement path
+
+> [!IMPORTANT]
+> Phase E starts with requirements and security boundaries. No document will be uploaded and no provider SDK will be added until consent behavior, credential handling, privacy terms, costs, and offline fallback are documented and reviewed.
 
 Development follows this milestone cycle:
 
